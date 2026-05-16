@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 
-def load_nasdaq_tickers() -> pd.DataFrame:
+def load_nasdaq_tickers() -> list:
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
         data_frame = pd.read_csv(url, sep='|')
@@ -14,7 +14,7 @@ def load_nasdaq_tickers() -> pd.DataFrame:
     except Exception:
         return []
 
-def load_wse_tickers():
+def load_wse_tickers() -> list:
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
     
     headers = {
