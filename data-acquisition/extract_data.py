@@ -1,18 +1,19 @@
 import os
 from dotenv import load_dotenv
 
-from src.fred_loader import load_fred_data
+# from src.fred_loader import load_fred_data
+from src.ticker_loader import load_nasdaq_tickers, load_wse_tickers
 
 if __name__ == "__main__":
     load_dotenv()
 
-    FRED_KEY = os.getenv("FRED_API_KEY")
+    # FRED_KEY = os.getenv("FRED_API_KEY")
 
-    if not FRED_KEY:
-        raise ValueError("Missing key in .env file!")
+    # if not FRED_KEY:
+    #     raise ValueError("Missing key in .env file!")
 
     # Loading FRED data
-    fred_df = load_fred_data(FRED_KEY)
+    # fred_df = load_fred_data(FRED_KEY)
 
     if not fred_df.empty:
         output_dir = os.getenv("CSV_OUTPUT_DIR", "../data-staging")
