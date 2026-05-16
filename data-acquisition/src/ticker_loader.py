@@ -1,6 +1,6 @@
 import pandas as pd
 
-def load_nasdaq_tickers():
+def load_nasdaq_tickers() -> pd.DataFrame:
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
         data_frame = pd.read_csv(url, sep='|')
