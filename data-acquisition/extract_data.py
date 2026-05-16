@@ -14,4 +14,11 @@ if __name__ == "__main__":
     # Loading FRED data
     fred_df = load_fred_data(FRED_KEY)
 
-    # Load df to db
+    if not fred_df.empty:
+        output_dir = os.getenv("CSV_OUTPUT_DIR", "../data-staging")
+        os.makedirs(output_dir, exist_ok=True)
+        
+        csv_filename = os.path.join(output_dir, 'raw_fred_data.csv')
+        fred_df.to_csv(csv_filename, index=False)
+    else:
+        print("FRED data frame is empty!")
