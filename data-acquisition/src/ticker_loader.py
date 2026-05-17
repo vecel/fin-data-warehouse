@@ -6,12 +6,24 @@ import pandas as pd
 def load_nasdaq_tickers() -> list:
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
-        data_frame = pd.read_csv(url, sep='|')
-        data_frame = data_frame[:-1]
-        data_frame = data_frame[~data_frame['Security Name'].str.contains('Test', case=False, na=False)]
-        tickers = data_frame['Symbol'].dropna().astype(str).tolist()
+        df = pd.read_csv(url, sep='|')
+        df = df.dropna(subset=['Symbol'])
+        df = df[:-1]
+        df = df[~df['Security Name'].str.contains('Test')]
+        tickers = df['Symbol'].astype(str).tolist()
         return tickers
     except Exception:
+        return []
+
+def load_nyse_tickers() -> list:
+    url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
+    try:
+        df = pd.read_csv(url, sep='|')
+        df = df.dropna(subset=['ACT Symbol'])
+        df = df[df['Exchange'] == 'N']
+        df = df[~df['ACT Symbol'].str.contains(r'\$|\.')]
+        return df['ACT Symbol'].astype(str).tolist()
+    except Exception as e:
         return []
 
 def load_wse_tickers() -> list:
@@ -20,13 +32,11 @@ def load_wse_tickers() -> list:
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
-    
-    print(f"Connecting to {url}...")
+
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to retrieve data: {e}")
+    except Exception as e:
         return []
         
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -36,8 +46,6 @@ def load_wse_tickers() -> list:
     
     for link in links:
         link_text = link.get_text(strip=True)
-        print(link_text)
-        
         match = re.search(r'^(.{3})', link_text)
         
         if match:
@@ -46,4 +54,4 @@ def load_wse_tickers() -> list:
             if ticker.isalnum():
                 yf_tickers.add(f"{ticker}.WA")
                 
-    return sorted(list(yf_tickers))
+    return list(yf_tickers)
