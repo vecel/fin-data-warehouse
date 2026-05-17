@@ -9,6 +9,7 @@ import src.config as config
 logger = logging.getLogger('ticker_loader')
 
 def load_nasdaq_tickers() -> None:
+    logger.info('Extracting Nasdaq tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
         df = pd.read_csv(url, sep='|')
@@ -20,23 +21,29 @@ def load_nasdaq_tickers() -> None:
         with open(config.NASDAQ_TICKERS_FILE, 'w') as file:
             for ticker in tickers:
                 file.write(f'{ticker}\n')
+        logger.info(f'Saved {len(tickers)} Nasdaq tickers.')
     except Exception as e:
-        logger.error('Nasdaq ticker loading exception. {e}')
+        logger.error(f'Nasdaq ticker loading exception. {e}')
 
-def load_nyse_tickers() -> list:
+def load_nyse_tickers() -> None:
+    logger.info('Extracting Nyse tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
     try:
         df = pd.read_csv(url, sep='|')
         df = df.dropna(subset=['ACT Symbol'])
         df = df[df['Exchange'] == 'N']
         df = df[~df['ACT Symbol'].str.contains(r'\$|\.')]
-        return df['ACT Symbol'].astype(str).tolist()
+        tickers = df['ACT Symbol'].astype(str).tolist()
+        with open(config.NYSE_TICKERS_FILE, 'w') as file:
+            for ticker in tickers:
+                file.write(f'{ticker}\n')
+        logger.info(f'Saved {len(tickers)} Nyse tickers.')
     except Exception as e:
-        return []
+        logger.error(f'Nyse ticker loading exception. {e}')
 
-def load_wse_tickers() -> list:
+def load_wse_tickers() -> None:
+    logger.info('Extracting WSE tickers.')
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
-    
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
@@ -45,13 +52,12 @@ def load_wse_tickers() -> list:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
     except Exception as e:
-        return []
+        logger.error(f'Cannot get WSE tickers. {e}')
+        return
         
     soup = BeautifulSoup(response.text, 'html.parser')
-    yf_tickers = set()
-    
+    tickers = set()
     links = soup.find_all('a', href=re.compile(r'^/notowania/'))
-    
     for link in links:
         link_text = link.get_text(strip=True)
         match = re.search(r'^(.{3})', link_text)
@@ -60,6 +66,10 @@ def load_wse_tickers() -> list:
             ticker = match.group(1).strip()
             
             if ticker.isalnum():
-                yf_tickers.add(f"{ticker}.WA")
-                
-    return list(yf_tickers)
+                tickers.add(f"{ticker}.WA")
+
+    with open(config.WSE_TICKERS_FILE, 'w') as file:
+        for ticker in tickers:
+            file.write(f'{ticker}\n')  
+    logger.info(f'Saved {len(tickers)} WSE tickers.') 
+    
