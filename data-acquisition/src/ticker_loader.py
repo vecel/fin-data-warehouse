@@ -2,8 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
+import logging
 
-def load_nasdaq_tickers() -> list:
+import src.config as config
+
+logger = logging.getLogger('ticker_loader')
+
+def load_nasdaq_tickers() -> None:
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
         df = pd.read_csv(url, sep='|')
@@ -11,9 +16,12 @@ def load_nasdaq_tickers() -> list:
         df = df[:-1]
         df = df[~df['Security Name'].str.contains('Test')]
         tickers = df['Symbol'].astype(str).tolist()
-        return tickers
-    except Exception:
-        return []
+
+        with open(config.NASDAQ_TICKERS_FILE, 'w') as file:
+            for ticker in tickers:
+                file.write(f'{ticker}\n')
+    except Exception as e:
+        logger.error('Nasdaq ticker loading exception. {e}')
 
 def load_nyse_tickers() -> list:
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
