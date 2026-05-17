@@ -17,7 +17,7 @@ def load_nasdaq_tickers() -> None:
         df = df[:-1]
         df = df[~df['Security Name'].str.contains('Test')]
         tickers = df['Symbol'].astype(str).tolist()
-        save_tickers(tickers, config.NASDAQ_TICKERS_FILE)
+        _save_tickers(tickers, config.NASDAQ_TICKERS_FILE)
         logger.info(f'Saved {len(tickers)} Nasdaq tickers.')
     except Exception as e:
         logger.error(f'Nasdaq ticker loading exception. {e}')
@@ -31,7 +31,7 @@ def load_nyse_tickers() -> None:
         df = df[df['Exchange'] == 'N']
         df = df[~df['ACT Symbol'].str.contains(r'\$|\.')]
         tickers = df['ACT Symbol'].astype(str).tolist()
-        save_tickers(tickers, config.NYSE_TICKERS_FILE)
+        _save_tickers(tickers, config.NYSE_TICKERS_FILE)
         logger.info(f'Saved {len(tickers)} Nyse tickers.')
     except Exception as e:
         logger.error(f'Nyse ticker loading exception. {e}')
@@ -61,16 +61,23 @@ def load_wse_tickers() -> None:
             if ticker.isalnum():
                 tickers.add(f"{ticker}.WA")
 
-    save_tickers(tickers, config.WSE_TICKERS_FILE)
+    _save_tickers(tickers, config.WSE_TICKERS_FILE)
     logger.info(f'Saved {len(tickers)} WSE tickers.') 
 
-def save_tickers(tickers, filename):
+def read_all_tickers():
+    return [
+        *_read_tickers(config.NASDAQ_TICKERS_FILE),
+        *_read_tickers(config.NYSE_TICKERS_FILE),
+        *_read_tickers(config.WSE_TICKERS_FILE)
+    ]
+
+def _save_tickers(tickers, filename):
     with open(filename, 'w') as file:
         for ticker in tickers:
             file.write(f'{ticker}\n')  
     
-def read_tickers(filename) -> list:
+def _read_tickers(filename) -> list:
     with open(filename, 'r') as file:
         content = file.read()
-        tickers = content.split('\n')
+        tickers = content.split('\n')[:-1]
         return tickers

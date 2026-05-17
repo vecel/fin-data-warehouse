@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from src.fred_loader import load_fred_data
 from src.ticker_loader import load_nasdaq_tickers, load_wse_tickers, load_nyse_tickers
+from src.quote_loader import fetch_instrument_data
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
