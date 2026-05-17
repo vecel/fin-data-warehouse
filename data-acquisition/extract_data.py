@@ -7,7 +7,7 @@ from src.ticker_loader import load_nasdaq_tickers, load_wse_tickers, load_nyse_t
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     logger = logging.getLogger('extract_data')
     logger.info('Starting data fetching script.')
     load_dotenv()
