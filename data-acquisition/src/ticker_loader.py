@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import logging
 
-import src.config as config
+from src.config import config
 
 logger = logging.getLogger('ticker_loader')
 
