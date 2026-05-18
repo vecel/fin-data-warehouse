@@ -1,0 +1,8 @@
+services:
+  data-acquisition:
+    build: ../data-acquisition
+    volumes:
+      - ../data-staging:/app/data-staging
+    environment:
+      - FRED_API_KEY=${FRED_API_KEY}
+      - STAGING_DIRECTORY=/app/data-staging
