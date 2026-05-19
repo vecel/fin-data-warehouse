@@ -1,4 +1,4 @@
--- Tworzenie wymiarów
+-- Dimensions
 
 CREATE TABLE DateDim (
     DateID bigint PRIMARY KEY,
@@ -65,7 +65,7 @@ CREATE TABLE InstrumentDim (
     FOREIGN KEY (ValidToDateID) REFERENCES DateDim(DateID)
 );
 
--- Tworzenie faktów
+-- Facts
 
 CREATE TABLE MacroFact (
     MacroFactID bigint PRIMARY KEY,
