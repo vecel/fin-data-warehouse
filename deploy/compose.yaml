@@ -1,3 +1,4 @@
+name: fin_data_warehouse
 services:
   data-acquisition:
     build: ../data-acquisition
@@ -6,3 +7,13 @@ services:
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
       - STAGING_DIRECTORY=/app/data-staging
+
+  db:
+    image: postgres:16
+    container_name: db
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  postgres_db:
