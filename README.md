@@ -20,3 +20,5 @@ This system follows a modular, multi-layer architecture:
 * `/data-processing` - dbt models, tests, and configurations.
 * `/api` - Python REST API source code and `Dockerfile`.
 * `/deploy` - Infrastructure files including `docker-compose.yml` and database init scripts.
+
+  [comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
