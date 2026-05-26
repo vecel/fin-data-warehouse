@@ -42,11 +42,11 @@ if __name__ == "__main__":
             save_tickers(wse_tickers, config.WSE_TICKERS_FILE)
 
     # Fetch tickers info, comment if you do not want - it takes a while.
-    wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]
-    wse_tickers_info = fetch_tickers_info(wse_tickers)
+    # wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]
+    # wse_tickers_info = fetch_tickers_info(wse_tickers)
 
-    df = pd.DataFrame(wse_tickers_info)
-    df.to_csv(config.TICKERS_INFO_FILE, index=False)
+    # df = pd.DataFrame(wse_tickers_info)
+    # df.to_csv(config.TICKERS_INFO_FILE, index=False)
 
     # load_nasdaq_tickers()
     # load_nyse_tickers()

@@ -40,7 +40,7 @@ def load_tickers_cache(filename):
         logger.info(f'Cache expired. "{latest_file}" is older than {config.TICKERS_CACHE_DAYS_VALID} days.')
         return None
         
-    logger.info(f'Reading data from cache: {latest_file}')
+    logger.info(f'Reading tickers data from cache: {latest_file}')
     with open(latest_file, 'r') as file:
         content = file.read()
         tickers = content.split('\n')[:-1]
