@@ -13,12 +13,44 @@ This system follows a modular, multi-layer architecture:
 * **Data Serving (API):** A containerized Python REST API (FastAPI/Flask) via Docker.
 [* **Data Visualization:** Tableau dashboards connecting directly to the transformed PostgreSQL schemas.]
 
+## Installation
+
+Clone the repository and enter created directory.
+
+```
+git clone https://github.com/vecel/fin-data-warehouse.git
+cd fin-data-warehouse
+```
+
+Create `.env` file with postgres database credentials.
+
+```
+cd deploy/
+touch .env
+```
+
+Paste environment variables to `.env` file. Use your own values.
+
+```
+POSTGRES_USER=<user>
+POSTGRES_PASSWORD=<password>
+POSTGRES_DB=<database>
+```
+
+Run `docker compose`.
+
+```
+docker compose up
+```
+
+[comment]: # (Guide to create .env inside data-acquisition)
+
 ## Repository structure
 
 * `/data-acquisition` - Python scripts and requirements for fetching data.
 * `/data-staging` - Directory for temporary CSV staging (files ignored by git).
 * `/data-processing` - dbt models, tests, and configurations.
-* `/api` - Python REST API source code and `Dockerfile`.
+* `/api` - Python REST API source code.
 * `/deploy` - Infrastructure files including `docker-compose.yml` and database init scripts.
 
-  [comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
+[comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
