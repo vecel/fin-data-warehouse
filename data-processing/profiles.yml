@@ -1,0 +1,11 @@
+postgres:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: 
+      password: 
+      port: 5432
+      dbname: 
+      schema: analytics

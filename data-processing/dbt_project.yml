@@ -1,0 +1,12 @@
+name: analytics
+version: 1.0.0
+config-version: 2
+
+profile: postgres
+
+model-paths: [models]
+target-path: target
+
+models:
+  analytics:
+    +materialized: view
