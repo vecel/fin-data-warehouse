@@ -1,12 +1,15 @@
-name: analytics
+name: finance_db
 version: 1.0.0
 config-version: 2
 
 profile: postgres
 
+seed-paths: [../data-staging]
 model-paths: [models]
 target-path: target
 
 models:
-  analytics:
-    +materialized: view
+  finance_db:
+    dwh:
+      +materialized: table
+      +schema: dwh

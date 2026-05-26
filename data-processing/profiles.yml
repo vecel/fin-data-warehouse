@@ -4,8 +4,9 @@ postgres:
     dev:
       type: postgres
       host: localhost
-      user: 
-      password: 
+      user: postgres
+      password: pgpass
       port: 5432
-      dbname: 
-      schema: analytics
+      dbname: finance_db
+      # This is fallback value. It is needed in profiles.yml file, but will be overriden by schema names in dbt_project.yml
+      schema: public
