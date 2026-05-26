@@ -10,10 +10,11 @@ LOCAL_STAGING_DIRECTORY_PATH = PROJECT_ROOT_PATH / 'data-staging'
 class Config:
     STAGING_DIRECTORY = os.getenv('STAGING_DIRECTORY', str(LOCAL_STAGING_DIRECTORY_PATH))
 
-    NASDAQ_TICKERS_FILE = f'{STAGING_DIRECTORY}/nasdaq_tickers.txt'
-    NYSE_TICKERS_FILE = f'{STAGING_DIRECTORY}/nyse_tickers.txt'
-    WSE_TICKERS_FILE = f'{STAGING_DIRECTORY}/wse_tickers.txt'
+    NASDAQ_TICKERS_FILE = f'{STAGING_DIRECTORY}/nasdaq_tickers'
+    NYSE_TICKERS_FILE = f'{STAGING_DIRECTORY}/nyse_tickers'
+    WSE_TICKERS_FILE = f'{STAGING_DIRECTORY}/wse_tickers'
+    TICKERS_CACHE_DAYS_VALID = 90
 
-    INSTRUMENT_DATA_FILE = f'{STAGING_DIRECTORY}/instrument_data.csv'
+    TICKERS_INFO_FILE = f'{STAGING_DIRECTORY}/tickers_info.csv'
 
 config = Config()

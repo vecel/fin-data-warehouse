@@ -8,8 +8,8 @@ from src.config import config
 
 logger = logging.getLogger('ticker_loader')
 
-def load_nasdaq_tickers() -> None:
-    logger.info('Extracting Nasdaq tickers.')
+def fetch_nasdaq_tickers() -> None:
+    logger.info('Fetching Nasdaq tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
         df = pd.read_csv(url, sep='|')
@@ -17,13 +17,12 @@ def load_nasdaq_tickers() -> None:
         df = df[:-1]
         df = df[~df['Security Name'].str.contains('Test')]
         tickers = df['Symbol'].astype(str).tolist()
-        _save_tickers(tickers, config.NASDAQ_TICKERS_FILE)
-        logger.info(f'Saved {len(tickers)} Nasdaq tickers.')
+        return tickers
     except Exception as e:
         logger.error(f'Nasdaq ticker loading exception. {e}')
 
-def load_nyse_tickers() -> None:
-    logger.info('Extracting Nyse tickers.')
+def fetch_nyse_tickers() -> None:
+    logger.info('Fetching Nyse tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
     try:
         df = pd.read_csv(url, sep='|')
@@ -31,13 +30,12 @@ def load_nyse_tickers() -> None:
         df = df[df['Exchange'] == 'N']
         df = df[~df['ACT Symbol'].str.contains(r'\$|\.')]
         tickers = df['ACT Symbol'].astype(str).tolist()
-        _save_tickers(tickers, config.NYSE_TICKERS_FILE)
-        logger.info(f'Saved {len(tickers)} Nyse tickers.')
+        return tickers
     except Exception as e:
         logger.error(f'Nyse ticker loading exception. {e}')
 
-def load_wse_tickers() -> None:
-    logger.info('Extracting WSE tickers.')
+def fetch_wse_tickers() -> None:
+    logger.info('Fetching WSE tickers.')
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -61,23 +59,5 @@ def load_wse_tickers() -> None:
             if ticker.isalnum():
                 tickers.add(f"{ticker}.WA")
 
-    _save_tickers(tickers, config.WSE_TICKERS_FILE)
-    logger.info(f'Saved {len(tickers)} WSE tickers.') 
-
-def read_all_tickers():
-    return [
-        *_read_tickers(config.NASDAQ_TICKERS_FILE),
-        *_read_tickers(config.NYSE_TICKERS_FILE),
-        *_read_tickers(config.WSE_TICKERS_FILE)
-    ]
-
-def _save_tickers(tickers, filename):
-    with open(filename, 'w') as file:
-        for ticker in tickers:
-            file.write(f'{ticker}\n')  
+    return tickers
     
-def _read_tickers(filename) -> list:
-    with open(filename, 'r') as file:
-        content = file.read()
-        tickers = content.split('\n')[:-1]
-        return tickers
