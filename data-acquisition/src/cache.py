@@ -12,8 +12,9 @@ logger = logging.getLogger('cache')
 
 class Cache:
     def __init__(self):
-        cache_path = Path(config.CACHE_DIRECTORY)
-        cache_path.mkdir(parents=True, exist_ok=True)
+        cache_directory = Path(config.CACHE_DIRECTORY)
+        cache_directory.mkdir(parents=True, exist_ok=True)
+        logger.debug(f'Ensured cache directory exists: {cache_directory}')
 
 
     def is_valid(self, filename, valid_days):

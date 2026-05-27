@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from src.config import config
 from src.cache import cache
+from src.staging import staging
 from src.ticker_loader import fetch_nasdaq_tickers, fetch_wse_tickers, fetch_nyse_tickers
 from src.calendar_loader import get_trading_calendars
 from src.fred_loader import load_fred_data
@@ -16,15 +17,12 @@ logger = logging.getLogger('main')
 
 if __name__ == "__main__":    
 
-    if cache.is_valid(config.CALENDARS_CACHE_FILE, valid_days=config.CALENDARS_CACHE_DAYS_VALID):
-        calendars = cache.load(config.CALENDARS_CACHE_FILE)
+    if cache.is_valid(config.CALENDARS_CACHE, valid_days=config.CALENDARS_CACHE_DAYS_VALID):
+        calendars = cache.load(config.CALENDARS_CACHE)
     else:
         calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
-        cache.save(calendars, config.CALENDARS_CACHE_FILE)
-
-    # if not is_calendars_cache_valid():
-    #     calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
-    #     save_calendars_cache(calendars, config.CALENDARS_END_DATE)
+        cache.save(calendars, config.CALENDARS_CACHE)
+    staging.save(calendars, config.CALENDARS_STAGING_FILE)
     
     # logger.info('Starting data fetching script.')
     # load_dotenv()
@@ -46,12 +44,11 @@ if __name__ == "__main__":
     #     print("FRED data frame is empty!")
 
     WSE_DELISTED = ['REX.WA', 'KDM.WA', 'IDG.WA', 'REG.WA', 'SVR.WA']
-    if cache.is_valid(config.WSE_TICKERS_CACHE_FILE, config.TICKERS_CACHE_DAYS_VALID):
-        wse_tickers = cache.load(config.WSE_TICKERS_CACHE_FILE)
-    else:
+    if not cache.is_valid(config.WSE_TICKERS_CACHE, config.TICKERS_CACHE_DAYS_VALID):
         wse_tickers = fetch_wse_tickers()
         if wse_tickers:
-            cache.save(wse_tickers, config.WSE_TICKERS_CACHE_FILE)
+            cache.save(wse_tickers, config.WSE_TICKERS_CACHE)
+
 
     # Fetch tickers info, comment if you do not want - it takes a while.
     # wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]
