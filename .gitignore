@@ -3,6 +3,7 @@ __pycache__
 .env
 
 data-staging
+cache
 .DS_Store
 
 data-processing/.user.yml

@@ -4,7 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from src.config import config
-from src.cache import load_tickers_cache, save_tickers, save_calendars, is_calendars_cache_valid
+from src.cache import cache
 from src.ticker_loader import fetch_nasdaq_tickers, fetch_wse_tickers, fetch_nyse_tickers
 from src.calendar_loader import get_trading_calendars
 from src.fred_loader import load_fred_data
@@ -12,13 +12,19 @@ from src.quote_loader import fetch_tickers_info
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
-if __name__ == "__main__":    
-    # fetch_instrument_data(config.INSTRUMENT_DATA_FILE)
-    logger = logging.getLogger('main')
+logger = logging.getLogger('main')
 
-    if not is_calendars_cache_valid():
+if __name__ == "__main__":    
+
+    if cache.is_valid(config.CALENDARS_CACHE_FILE, valid_days=config.CALENDARS_CACHE_DAYS_VALID):
+        calendars = cache.load(config.CALENDARS_CACHE_FILE)
+    else:
         calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
-        save_calendars(calendars, config.CALENDARS_END_DATE)
+        cache.save(calendars, config.CALENDARS_CACHE_FILE)
+
+    # if not is_calendars_cache_valid():
+    #     calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
+    #     save_calendars_cache(calendars, config.CALENDARS_END_DATE)
     
     # logger.info('Starting data fetching script.')
     # load_dotenv()
@@ -40,12 +46,12 @@ if __name__ == "__main__":
     #     print("FRED data frame is empty!")
 
     WSE_DELISTED = ['REX.WA', 'KDM.WA', 'IDG.WA', 'REG.WA', 'SVR.WA']
-
-    wse_tickers = load_tickers_cache(config.WSE_TICKERS_FILE)
-    if not wse_tickers:
+    if cache.is_valid(config.WSE_TICKERS_CACHE_FILE, config.TICKERS_CACHE_DAYS_VALID):
+        wse_tickers = cache.load(config.WSE_TICKERS_CACHE_FILE)
+    else:
         wse_tickers = fetch_wse_tickers()
         if wse_tickers:
-            save_tickers(wse_tickers, config.WSE_TICKERS_FILE)
+            cache.save(wse_tickers, config.WSE_TICKERS_CACHE_FILE)
 
     # Fetch tickers info, comment if you do not want - it takes a while.
     # wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]

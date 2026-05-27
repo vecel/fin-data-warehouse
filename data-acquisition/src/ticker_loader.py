@@ -4,11 +4,10 @@ import re
 import pandas as pd
 import logging
 
-from src.config import config
-
 logger = logging.getLogger('ticker_loader')
 
-def fetch_nasdaq_tickers() -> None:
+
+def fetch_nasdaq_tickers():
     logger.info('Fetching Nasdaq tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
     try:
@@ -21,7 +20,8 @@ def fetch_nasdaq_tickers() -> None:
     except Exception as e:
         logger.error(f'Nasdaq ticker loading exception. {e}')
 
-def fetch_nyse_tickers() -> None:
+
+def fetch_nyse_tickers():
     logger.info('Fetching Nyse tickers.')
     url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
     try:
@@ -34,7 +34,8 @@ def fetch_nyse_tickers() -> None:
     except Exception as e:
         logger.error(f'Nyse ticker loading exception. {e}')
 
-def fetch_wse_tickers() -> None:
+
+def fetch_wse_tickers():
     logger.info('Fetching WSE tickers.')
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
     headers = {
@@ -59,5 +60,5 @@ def fetch_wse_tickers() -> None:
             if ticker.isalnum():
                 tickers.add(f"{ticker}.WA")
 
-    return tickers
+    return list(tickers)
     
