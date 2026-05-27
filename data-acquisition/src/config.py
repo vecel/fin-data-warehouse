@@ -5,7 +5,7 @@ CURRENT_FILE = Path(__file__).resolve()
 
 # Sets PROJECT_ROOT to the fin-data-warehouse directory
 PROJECT_ROOT_PATH = CURRENT_FILE.parent.parent.parent
-LOCAL_STAGING_DIRECTORY_PATH = PROJECT_ROOT_PATH / 'data-staging'
+LOCAL_STAGING_DIRECTORY_PATH = PROJECT_ROOT_PATH / 'staging'
 LOCAL_CACHE_DIRECTORY_PATH = PROJECT_ROOT_PATH / 'cache'
 
 class Config:

@@ -1,16 +1,15 @@
 name: fin_data_warehouse
-# TODO: Add user accounts in data-acquisition and db containers
 services:
   data-acquisition:
     build: ../data-acquisition
     container_name: data_acquisition
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
-      - CACHE_DIRECTORY=/app/cache
-      - STAGING_DIRECTORY=/app/data-staging
+      - CACHE_DIRECTORY=/home/acqu/app/cache
+      - STAGING_DIRECTORY=/home/acqu/app/staging
     volumes:
-      - ../data-staging:/app/data-staging
-      - ../cache:/app/cache
+      - ../staging:/home/acqu/app/staging
+      - ../cache:/home/acqu/app/cache
 
   db:
     image: postgres:16

@@ -2,7 +2,7 @@
 __pycache__
 .env
 
-data-staging
+staging
 cache
 .DS_Store
 
