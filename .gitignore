@@ -4,3 +4,8 @@ __pycache__
 
 data-staging
 .DS_Store
+
+data-processing/.user.yml
+data-processing/target
+data-processing/logs
+data-processing/dbt_packages
