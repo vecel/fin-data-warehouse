@@ -10,9 +10,10 @@ logger = logging.getLogger('cache')
 def save_calendars(dataframe, end_date):   
     try: 
         dataframe.to_csv(f'{config.CALENDARS_CACHE_FILE}-{end_date}.csv', index=False)
-        logger.info(f'Saved market calendars to cache: {config.CALENDARS_CACHE_FILE}-{end_date}.csv')
+        dataframe.to_csv(f'{config.CALENDARS_CACHE_FILE}.csv', index=False)
+        logger.info(f'Saved market calendars to cache: {config.CALENDARS_CACHE_FILE}.csv with date {end_date}')
     except PermissionError as e:
-        logger.error(f'Could not write market calendars to cache {config.CALENDARS_CACHE_FILE}-{end_date}.csv, because of PermissionError: {e}')
+        logger.error(f'Could not write market calendars to cache {config.CALENDARS_CACHE_FILE}.csv, because of PermissionError: {e}')
 
 def is_calendars_cache_valid():
     pattern = f'{config.CALENDARS_CACHE_FILE}-*.csv'
