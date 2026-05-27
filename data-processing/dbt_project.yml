@@ -16,3 +16,43 @@ models:
     staging:
       +materialized: table
       +schema: staging
+
+seeds:
+  finance_db:
+    wse_tickers_info:
+      +column_types:
+        volume: numeric
+        firstTradeDateMilliseconds: numeric
+        earningsTimestamp: numeric
+        earningsTimestampStart: numeric
+        earningsTimestampEnd: numeric
+        compensationAsOfEpochDate: numeric
+        governanceEpochDate: numeric
+        enterpriseValue: numeric
+        totalRevenue: numeric
+        ebitda: numeric
+        totalCash: numeric
+        totalDebt: numeric
+        freeCashflow: numeric
+        operatingCashflow: numeric
+        sharesShortPreviousMonthDate: numeric
+        sharesOutstanding: numeric
+        regularMarketTime: numeric
+        nonDilutedMarketCap: numeric
+        nextFiscalYearEnd: numeric
+        netIncomeToCommon: numeric
+        mostRecentQuarter: numeric
+        marketCap: numeric
+        lastSplitDate: numeric
+        lastFiscalYearEnd: numeric
+        lastDividendDate: numeric
+        impliedSharesOutstanding: numeric
+        grossProfits: numeric
+        floatShares: numeric
+        exDividendDate: numeric
+        earningsCallTimestampStart: numeric
+        earningsCallTimestampEnd: numeric
+        dividendDate: numeric
+        dateShortInterest: numeric
+
+        
