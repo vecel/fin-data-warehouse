@@ -13,9 +13,9 @@ models:
     dwh:
       +materialized: table
       +schema: dwh
-    staging:
+    stg:
       +materialized: table
-      +schema: staging
+      +schema: stg
 
 seeds:
   finance_db:

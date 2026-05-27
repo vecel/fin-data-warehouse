@@ -8,8 +8,9 @@ WITH exchange_dim AS (
         exchange_name,
         exchange_code,
         exchange_timezone_name,
-        exchange_timezone_code
-    FROM {{ ref('wse_tickers_info_stg') }}
+        exchange_timezone_code,
+        exchange_currency_name
+    FROM {{ ref('tickers_info_stg') }}
 )
 
 SELECT * FROM exchange_dim

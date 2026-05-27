@@ -7,14 +7,25 @@ WITH source AS (
 renamed AS (
     SELECT
         CAST(symbol AS varchar(20)) AS instrument_code,
+        CAST("shortName" AS varchar(50)) AS instrument_short_name,
+        CAST("longName" AS varchar(50)) AS instrument_long_name,
+        CAST(city AS varchar(50)) AS city_name,
+        CAST(state AS varchar(50)) AS state_name,
+        CAST(zip AS varchar(20)) AS zip_code,
+        CAST(market AS varchar(50)) AS instrument_market_name,
+        CAST("quoteType" AS varchar(50)) AS instrument_quote_type_name,
+        CAST(sector AS varchar(50)) AS instrument_sector_name,
+        CAST(industry AS varchar(50)) AS instrument_industry_name,
+        -- CAST("dividendDate" AS varchar(50)) AS TODO: check date format
+        -- CAST("dividendRate" AS varchar(50)) AS
 
         CAST(exchange AS varchar(20)) AS exchange_code,
         CAST("fullExchangeName" AS varchar(50)) AS exchange_name,
         CAST("exchangeTimezoneShortName" AS varchar(20)) AS exchange_timezone_code,
         CAST("exchangeTimezoneName" AS varchar(50)) AS exchange_timezone_name,
+        CAST(currency AS varchar(20)) AS exchange_currency_name,
 
-        CAST(country AS varchar(50)) AS country_name,
-        CAST(currency AS varchar(20)) AS currency_code
+        CAST(country AS varchar(50)) AS country_name
     FROM source
 )
 
