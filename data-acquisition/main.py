@@ -8,6 +8,7 @@ from src.cache import cache
 from src.staging import staging
 from src.ticker_loader import fetch_nasdaq_tickers, fetch_wse_tickers, fetch_nyse_tickers
 from src.calendar_loader import get_trading_calendars
+from src.country_loader import get_countries
 from src.fred_loader import load_fred_data
 from src.quote_loader import fetch_tickers_info
 
@@ -24,12 +25,18 @@ if __name__ == "__main__":
         if wse_tickers:
             cache.save(wse_tickers, config.WSE_TICKERS_CACHE)  
 
+
+
     if cache.is_valid(config.CALENDARS_CACHE, valid_days=config.CALENDARS_CACHE_DAYS_VALID):
         calendars = cache.load(config.CALENDARS_CACHE)
     else:
         calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
         cache.save(calendars, config.CALENDARS_CACHE)
     staging.save(calendars, config.CALENDARS_STAGING_FILE)
+
+
+    countires = get_countries()
+    staging.save(countires, config.COUNTRIES_STAGING_FILE)
     
     # logger.info('Starting data fetching script.')
     # load_dotenv()
