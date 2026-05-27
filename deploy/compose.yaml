@@ -1,4 +1,5 @@
 name: fin_data_warehouse
+# TODO: Add user accounts in data-acquisition and db containers
 services:
   data-acquisition:
     build: ../data-acquisition
