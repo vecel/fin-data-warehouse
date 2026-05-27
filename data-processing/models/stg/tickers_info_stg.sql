@@ -25,7 +25,7 @@ renamed AS (
         CAST("exchangeTimezoneName" AS varchar(50)) AS exchange_timezone_name,
         CAST(currency AS varchar(20)) AS exchange_currency_name,
 
-        CAST(country AS varchar(50)) AS country_name
+        CAST(COALESCE(country, 'Unknown') AS varchar(50)) AS country_name
     FROM source
 )
 
