@@ -6,4 +6,6 @@ def get_countries():
         {'name': country.name, 'code': country.alpha_2} 
         for country in pycountry.countries
     ]
-    return pd.DataFrame(country_data)
+    countries_df = pd.DataFrame(country_data)
+    countries_df.loc[countries_df['code'] == 'CZ', 'name'] = 'Czech Republic'
+    return countries_df
