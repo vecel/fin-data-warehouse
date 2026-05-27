@@ -4,9 +4,10 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from src.config import config
-from src.cache import load_tickers_cache, save_tickers
-from src.fred_loader import load_fred_data
+from src.cache import load_tickers_cache, save_tickers, save_calendars, is_calendars_cache_valid
 from src.ticker_loader import fetch_nasdaq_tickers, fetch_wse_tickers, fetch_nyse_tickers
+from src.calendar_loader import get_trading_calendars
+from src.fred_loader import load_fred_data
 from src.quote_loader import fetch_tickers_info
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
@@ -14,6 +15,11 @@ logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', 
 if __name__ == "__main__":    
     # fetch_instrument_data(config.INSTRUMENT_DATA_FILE)
     logger = logging.getLogger('main')
+
+    if not is_calendars_cache_valid():
+        calendars = get_trading_calendars(end_date=config.CALENDARS_END_DATE)
+        save_calendars(calendars, config.CALENDARS_END_DATE)
+    
     # logger.info('Starting data fetching script.')
     # load_dotenv()
 

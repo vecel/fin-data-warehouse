@@ -43,7 +43,8 @@ Run `docker compose`.
 docker compose up
 ```
 
-[comment]: # (Guide to create .env inside data-acquisition)
+[comment]: # (Add guide to create .env inside data-acquisition)
+[comment]: # (After running docker compose up root owns data-staging directory. You won't have access to it unless you change directory ownership)
 
 ## Repository structure
 

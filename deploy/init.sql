@@ -1,6 +1,6 @@
--- Dimensions
+CREATE SCHEMA IF NOT EXISTS dwh;
 
-CREATE TABLE DateDim (
+CREATE TABLE dwh.Date_Dim (
     DateID bigint PRIMARY KEY,
     Date date,
     YearNumber bigint,
@@ -16,21 +16,21 @@ CREATE TABLE DateDim (
     IsUnitedStatesEarlyCloseDayFlag boolean
 );
 
-CREATE TABLE CountryDim (
+CREATE TABLE dwh.Country_Dim (
     CountryID int PRIMARY KEY,
     CountryCode varchar(20),
     CountryName varchar(50),
     CurrencyCode varchar(20)
 );
 
-CREATE TABLE MacroIndicatorDim (
+CREATE TABLE dwh.MacroIndicator_Dim (
     IndicatorID int PRIMARY KEY,
     IndicatorCode varchar(20),
     IndicatorName varchar(100),
     Frequency varchar(20)
 );
 
-CREATE TABLE ExchangeDim (
+CREATE TABLE dwh.Exchange_Dim (
     ExchangeID bigint PRIMARY KEY,
     ExchangeCode varchar(20),
     ExchangeName varchar(50),
@@ -38,7 +38,7 @@ CREATE TABLE ExchangeDim (
     ExchangeTimeZoneName varchar(50)
 );
 
-CREATE TABLE InstrumentDim (
+CREATE TABLE dwh.Instrument_Dim (
     InstrumentID bigint PRIMARY KEY,
     InstrumentCode varchar(50),
     InstrumentShortName varchar(50),
@@ -60,26 +60,24 @@ CREATE TABLE InstrumentDim (
     ValidToDateID bigint,
     IsActiveFlag boolean,
     
-    FOREIGN KEY (LastDividendDateID) REFERENCES DateDim(DateID),
-    FOREIGN KEY (ValidFromDateID) REFERENCES DateDim(DateID),
-    FOREIGN KEY (ValidToDateID) REFERENCES DateDim(DateID)
+    FOREIGN KEY (LastDividendDateID) REFERENCES dwh.Date_Dim(DateID),
+    FOREIGN KEY (ValidFromDateID) REFERENCES dwh.Date_Dim(DateID),
+    FOREIGN KEY (ValidToDateID) REFERENCES dwh.Date_Dim(DateID)
 );
 
--- Facts
-
-CREATE TABLE MacroFact (
+CREATE TABLE dwh.Macro_Fact (
     MacroFactID bigint PRIMARY KEY,
     DateID bigint,
     CountryID int,
     IndicatorID int,
     IndicatorValue double precision,
     
-    FOREIGN KEY (DateID) REFERENCES DateDim(DateID),
-    FOREIGN KEY (CountryID) REFERENCES CountryDim(CountryID),
-    FOREIGN KEY (IndicatorID) REFERENCES MacroIndicatorDim(IndicatorID)
+    FOREIGN KEY (DateID) REFERENCES dwh.Date_Dim(DateID),
+    FOREIGN KEY (CountryID) REFERENCES dwh.Country_Dim(CountryID),
+    FOREIGN KEY (IndicatorID) REFERENCES dwh.MacroIndicator_Dim(IndicatorID)
 );
 
-CREATE TABLE QuoteFact (
+CREATE TABLE dwh.Quote_Fact (
     InstrumentID bigint,
     DateID bigint,
     ExchangeID bigint,
@@ -92,14 +90,14 @@ CREATE TABLE QuoteFact (
     
     PRIMARY KEY (InstrumentID, DateID),
     
-    FOREIGN KEY (InstrumentID) REFERENCES InstrumentDim(InstrumentID),
-    FOREIGN KEY (DateID) REFERENCES DateDim(DateID),
-    FOREIGN KEY (ExchangeID) REFERENCES ExchangeDim(ExchangeID),
-    FOREIGN KEY (CountryID) REFERENCES CountryDim(CountryID)
+    FOREIGN KEY (InstrumentID) REFERENCES dwh.Instrument_Dim(InstrumentID),
+    FOREIGN KEY (DateID) REFERENCES dwh.Date_Dim(DateID),
+    FOREIGN KEY (ExchangeID) REFERENCES dwh.Exchange_Dim(ExchangeID),
+    FOREIGN KEY (CountryID) REFERENCES dwh.Country_Dim(CountryID)
     
 );
 
-CREATE TABLE MarketNewsFact (
+CREATE TABLE dwh.MarketNews_Fact (
     MarketNewsID bigint,
     InstrumentID bigint,
     DateID bigint,
@@ -121,6 +119,6 @@ CREATE TABLE MarketNewsFact (
     
     PRIMARY KEY (MarketNewsID, InstrumentID),
     
-    FOREIGN KEY (InstrumentID) REFERENCES InstrumentDim(InstrumentID),
-    FOREIGN KEY (DateID) REFERENCES DateDim(DateID)
+    FOREIGN KEY (InstrumentID) REFERENCES dwh.Instrument_Dim(InstrumentID),
+    FOREIGN KEY (DateID) REFERENCES dwh.Date_Dim(DateID)
 );
