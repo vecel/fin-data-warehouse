@@ -4,9 +4,9 @@ postgres:
     dev:
       type: postgres
       host: localhost
-      user: postgres
-      password: pgpass
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
       port: 5432
-      dbname: finance_db
+      dbname: "{{ env_var('POSTGRES_DB') }}"
       # This is fallback value. It is needed in profiles.yml file, but will be overriden by schema names in dbt_project.yml
       schema: public

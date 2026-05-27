@@ -4,7 +4,7 @@ config-version: 2
 
 profile: postgres
 
-seed-paths: [../data-staging]
+seed-paths: ["{{ env_var('SEEDS_DIRECTORY', '../data-staging') }}"]
 model-paths: [models]
 target-path: target
 

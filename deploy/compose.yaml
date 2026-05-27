@@ -5,9 +5,11 @@ services:
     container_name: data_acquisition
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
+      - CACHE_DIRECTORY=/app/cache
       - STAGING_DIRECTORY=/app/data-staging
     volumes:
       - ../data-staging:/app/data-staging
+      - ../cache:/app/cache
 
   db:
     image: postgres:16
@@ -21,6 +23,17 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  dbt:
+    build: ../data-processing
+    container_name: data_processing
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - SEEDS_DIRECTORY=seeds
+    volumes:
+      - ../data-staging:/app/seeds
 
 volumes:
   postgres_db:

@@ -1,5 +1,11 @@
-FROM ghcr.io/dbt-labs/dbt-postgres:1.9.0
+FROM python:3.10-slim
 WORKDIR /app
-ENV DBT_PROFILES_DIR=.
+RUN pip install --no-cache-dir dbt-postgres==1.10.0
+COPY packages.yml dbt_project.yml .
+RUN dbt deps
 COPY . .
-CMD ["dbt", "run"]
+RUN chmod +x docker-entrypoint.sh && \
+    useradd dbtuser && \
+    chown -R dbtuser:dbtuser /app
+USER dbtuser
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
