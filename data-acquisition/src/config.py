@@ -22,8 +22,8 @@ class Config:
     WSE_TICKERS_CACHE = f'{CACHE_DIRECTORY}/wse_tickers'
     TICKERS_CACHE_DAYS_VALID = 365
 
-    WSE_INFO_CACHE = f'{CACHE_DIRECTORY}/wse_tickers_info'
-    WSE_INFO_STAGING_FILE = f'{STAGING_DIRECTORY}/wse_tickers_info.csv'
+    WSE_TICKERS_INFO_CACHE = f'{CACHE_DIRECTORY}/wse_tickers_info'
+    WSE_TICKERS_INFO_STAGING_FILE = f'{STAGING_DIRECTORY}/wse_tickers_info.csv'
     TICKERS_INFO_CACHE_DAYS_VALID = 30
 
 

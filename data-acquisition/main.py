@@ -15,7 +15,14 @@ logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', 
 
 logger = logging.getLogger('main')
 
-if __name__ == "__main__":    
+if __name__ == "__main__":  
+
+    if cache.is_valid(config.WSE_TICKERS_CACHE, config.TICKERS_CACHE_DAYS_VALID):
+        wse_tickers = cache.load(config.WSE_TICKERS_CACHE)
+    else:
+        wse_tickers = fetch_wse_tickers()
+        if wse_tickers:
+            cache.save(wse_tickers, config.WSE_TICKERS_CACHE)  
 
     if cache.is_valid(config.CALENDARS_CACHE, valid_days=config.CALENDARS_CACHE_DAYS_VALID):
         calendars = cache.load(config.CALENDARS_CACHE)
@@ -43,16 +50,17 @@ if __name__ == "__main__":
     # else:
     #     print("FRED data frame is empty!")
 
-    WSE_DELISTED = ['REX.WA', 'KDM.WA', 'IDG.WA', 'REG.WA', 'SVR.WA']
-    if not cache.is_valid(config.WSE_TICKERS_CACHE, config.TICKERS_CACHE_DAYS_VALID):
-        wse_tickers = fetch_wse_tickers()
-        if wse_tickers:
-            cache.save(wse_tickers, config.WSE_TICKERS_CACHE)
-
 
     # Fetch tickers info, comment if you do not want - it takes a while.
-    # wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]
-    # wse_tickers_info = fetch_tickers_info(wse_tickers)
+    WSE_DELISTED = ['REX.WA', 'KDM.WA', 'IDG.WA', 'REG.WA', 'SVR.WA']
+    if cache.is_valid(config.WSE_TICKERS_INFO_CACHE, config.TICKERS_INFO_CACHE_DAYS_VALID):
+        wse_tickers_info = cache.load(config.WSE_TICKERS_INFO_CACHE)
+    else:
+        listed_wse_tickers = [ticker for ticker in wse_tickers if ticker not in WSE_DELISTED]
+        wse_tickers_info = fetch_tickers_info(listed_wse_tickers)
+        cache.save(wse_tickers_info, config.WSE_TICKERS_INFO_CACHE)
+
+    staging.save(wse_tickers_info, config.WSE_TICKERS_INFO_STAGING_FILE)
 
     # df = pd.DataFrame(wse_tickers_info)
     # df.to_csv(config.TICKERS_INFO_FILE, index=False)
