@@ -38,9 +38,10 @@ POSTGRES_PASSWORD=<password>
 POSTGRES_DB=<database>
 ```
 
-Run `docker compose`.
+Run startup script.
 ```
-docker compose up
+cd ..
+./startup.sh
 ```
 
 [comment]: # (Add guide to create .env inside data-acquisition)
