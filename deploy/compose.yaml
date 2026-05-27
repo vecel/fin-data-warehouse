@@ -23,6 +23,13 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 3s
+
 
   dbt:
     build: ../data-processing
@@ -34,6 +41,9 @@ services:
       - SEEDS_DIRECTORY=seeds
     volumes:
       - ../data-staging:/app/seeds
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_db:
