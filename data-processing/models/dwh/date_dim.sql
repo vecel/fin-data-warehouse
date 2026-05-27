@@ -21,7 +21,7 @@ combined_date_spine AS (
     SELECT calendar_date FROM end_of_the_world
 ),
 
-date_dim AS (
+calculated_attributes AS (
     SELECT 
         TO_CHAR(calendar_date, 'YYYYMMDD')::INT AS date_id,
         calendar_date AS date,
@@ -37,8 +37,27 @@ date_dim AS (
             WHEN EXTRACT(ISODOW FROM calendar_date) IN (6, 7) THEN TRUE 
             ELSE FALSE 
         END AS is_weekend_flag
-        -- TODO: Add three trading day flags (use python script for that)
     FROM combined_date_spine
+),
+
+trading_calendars AS (
+    SELECT 
+        date_id,
+        is_united_states_trading_day_flag,
+        is_poland_trading_day_flag,
+        is_united_states_early_close_day_flag
+    FROM {{ ref('trading_calendars_stg') }}
+),
+
+date_dim AS (
+    SELECT 
+        ca.*,
+        tc.is_united_states_trading_day_flag,
+        tc.is_united_states_early_close_day_flag,
+        tc.is_poland_trading_day_flag
+    FROM calculated_attributes ca
+    LEFT JOIN trading_calendars tc
+    ON ca.date_id = tc.date_id
 )
 
 SELECT * FROM date_dim
