@@ -55,3 +55,21 @@ docker compose up
 * `/deploy` - Infrastructure files including `docker-compose.yml` and database init scripts.
 
 [comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
+
+---
+
+#### Work done
+1. Data acqusition:
+   - Container definition - Mateusz
+   - Cache & staging - Mateusz
+   - Ticker loader, calendar loader, quote loader - Mateusz
+2. Data processing:
+    - Dbt project setup - Mateusz
+    - Container definition - Mateusz
+    - Date dimension, exchange dimension - Mateusz
+    - Wse tickers info staging, calendar staging - Mateusz
+3. Deployment:
+    - Docker compose definition - Mateusz
+4. Other:
+    - Project and repository structure - Mateusz
+    - README - Mateusz
