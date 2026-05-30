@@ -6,6 +6,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ParquetWriter:
+    def read(self, src: str) -> pd.DataFrame:
+        src_path = Path(src)
+        if not src_path.exists():
+            raise FileNotFoundError(f'File {src} does not exist.')
+        return pd.read_parquet(src)
+
     def write(self, df: pd.DataFrame, dest: str) -> None:
         dest_path = Path(dest)
         dest_path.parent.mkdir(parents=True, exist_ok=True)

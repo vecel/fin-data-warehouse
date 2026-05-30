@@ -1,7 +1,11 @@
+import logging
 import pandas as pd
 import pycountry
 
-def get_countries():
+logger = logging.getLogger(__name__)
+
+def fetch_countries():
+    logger.info('Fetching country codes')
     country_data = [
         {'name': country.name, 'code': country.alpha_2} 
         for country in pycountry.countries

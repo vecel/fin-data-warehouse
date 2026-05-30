@@ -1,9 +1,13 @@
+import logging
 from datetime import datetime
 import pandas as pd
 import pandas_market_calendars as mcal
 import exchange_calendars as xcal
 
-def get_trading_calendars(start_date = '2020-01-01', end_date = '2026-12-31'):
+logger = logging.getLogger(__name__)
+
+def fetch_trading_calendars(start_date = '2020-01-01', end_date = '2026-12-31'):
+    logger.info(f'Fetching trading calendars for range {start_date} - {end_date}')
     end_date_year = datetime.strptime(end_date, '%Y-%m-%d').year
     current_year = datetime.now().year
     if end_date_year > current_year:

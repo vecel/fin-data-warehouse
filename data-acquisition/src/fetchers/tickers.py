@@ -4,12 +4,20 @@ import re
 import pandas as pd
 import logging
 
-logger = logging.getLogger('ticker_loader')
+logger = logging.getLogger(__name__)
 
+def fetch_tickers():
+    nasdaq_tickers = _fetch_nasdaq_tickers()
+    nyse_tickers = _fetch_nyse_tickers()
+    wse_tickers = _fetch_wse_tickers()
 
-def fetch_nasdaq_tickers():
+    df = pd.DataFrame(nasdaq_tickers + nyse_tickers + wse_tickers, columns=['ticker'])
+
+    return df
+
+def _fetch_nasdaq_tickers():
     logger.info('Fetching Nasdaq tickers.')
-    url = "ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt"
+    url = 'ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt'
     try:
         df = pd.read_csv(url, sep='|')
         df = df.dropna(subset=['Symbol'])
@@ -18,12 +26,12 @@ def fetch_nasdaq_tickers():
         tickers = df['Symbol'].astype(str).tolist()
         return tickers
     except Exception as e:
-        logger.error(f'Nasdaq ticker loading exception. {e}')
+        logger.error(f'Cannot fetch Nasdaq tickers. {e}')
 
 
-def fetch_nyse_tickers():
+def _fetch_nyse_tickers():
     logger.info('Fetching Nyse tickers.')
-    url = "ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt"
+    url = 'ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt'
     try:
         df = pd.read_csv(url, sep='|')
         df = df.dropna(subset=['ACT Symbol'])
@@ -32,10 +40,10 @@ def fetch_nyse_tickers():
         tickers = df['ACT Symbol'].astype(str).tolist()
         return tickers
     except Exception as e:
-        logger.error(f'Nyse ticker loading exception. {e}')
+        logger.error(f'Cannot fetch Nyse tickers. {e}')
 
 
-def fetch_wse_tickers():
+def _fetch_wse_tickers():
     logger.info('Fetching WSE tickers.')
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
     headers = {
@@ -46,7 +54,7 @@ def fetch_wse_tickers():
         response = requests.get(url, headers=headers)
         response.raise_for_status()
     except Exception as e:
-        logger.error(f'Cannot get WSE tickers. {e}')
+        logger.error(f'Cannot fetch WSE tickers. {e}')
         return
         
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -58,7 +66,6 @@ def fetch_wse_tickers():
         if match:
             ticker = match.group(1).strip()
             if ticker.isalnum():
-                tickers.add(f"{ticker}.WA")
+                tickers.add(f'{ticker}.WA')
 
     return list(tickers)
-    
