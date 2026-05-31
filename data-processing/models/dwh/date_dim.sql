@@ -26,9 +26,9 @@ calculated_attributes AS (
         calendar_date AS date,
         EXTRACT(YEAR FROM calendar_date)::INT AS year_number,
         EXTRACT(QUARTER FROM calendar_date)::INT AS quarter_number,
-        TRIM(TO_CHAR(calendar_date, 'Month')) AS month_name,
+        TRIM(TO_CHAR(calendar_date, 'Month'))::VARCHAR(50) AS month_name,
         EXTRACT(MONTH FROM calendar_date)::INT AS month_number,
-        TRIM(TO_CHAR(calendar_date, 'Day')) AS day_name,
+        TRIM(TO_CHAR(calendar_date, 'Day'))::VARCHAR(50) AS day_name,
         EXTRACT(ISODOW FROM calendar_date)::INT AS day_of_week_number,
         EXTRACT(DAY FROM calendar_date)::INT AS day_of_month_number,
         EXTRACT(DOY FROM calendar_date)::INT AS day_of_year_number,
@@ -41,11 +41,11 @@ calculated_attributes AS (
 
 trading_calendars AS (
     SELECT 
-        date_id,
-        is_united_states_trading_day_flag,
-        is_poland_trading_day_flag,
-        is_united_states_early_close_day_flag
-    FROM {{ ref('trading_calendars_stg') }}
+        TO_CHAR(date, 'YYYYMMDD')::INT AS date_id,
+        is_us_trading_day AS is_united_states_trading_day_flag,
+        is_pl_trading_day AS is_poland_trading_day_flag,
+        is_us_early_close AS is_united_states_early_close_day_flag
+    FROM stg.calendars
 ),
 
 date_dim AS (

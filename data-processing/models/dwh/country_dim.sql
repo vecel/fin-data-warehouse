@@ -4,16 +4,16 @@
 
 WITH codes AS (
     SELECT DISTINCT
-        country_name,
-        country_code
-    FROM {{ ref('countries_stg') }}
+        name::VARCHAR(50) AS country_name,
+        code::VARCHAR(20) AS country_code
+    FROM stg.countries
 ),
 
 names AS (
     SELECT DISTINCT
-        {{ dbt_utils.generate_surrogate_key(['country_name']) }} AS country_id,
-        country_name
-    FROM {{ ref('tickers_info_stg') }}
+        {{ dbt_utils.generate_surrogate_key(['country']) }} AS country_id,
+        country::VARCHAR(50) AS country_name
+    FROM stg.fundamentals
 ),
 
 country_dim AS (

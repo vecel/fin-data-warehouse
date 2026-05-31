@@ -4,7 +4,6 @@ config-version: 2
 
 profile: postgres
 
-seed-paths: ["{{ env_var('SEEDS_DIRECTORY', '../data-staging') }}"]
 model-paths: [models]
 target-path: target
 
@@ -13,9 +12,6 @@ models:
     dwh:
       +materialized: table
       +schema: dwh
-    stg:
-      +materialized: table
-      +schema: stg
 
 seeds:
   finance_db:

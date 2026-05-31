@@ -4,13 +4,13 @@
 
 WITH exchange_dim AS (
     SELECT DISTINCT
-        {{ dbt_utils.generate_surrogate_key(['exchange_code']) }} AS exchange_id,
-        exchange_name,
-        exchange_code,
-        exchange_timezone_name,
-        exchange_timezone_code,
-        exchange_currency_name
-    FROM {{ ref('tickers_info_stg') }}
+        {{ dbt_utils.generate_surrogate_key(['exchange']) }} AS exchange_id,
+        "fullExchangeName"::VARCHAR(50) AS exchange_name,
+        exchange::VARCHAR(20) AS exchange_code,
+        "exchangeTimezoneName"::VARCHAR(50) AS exchange_timezone_name,
+        "exchangeTimezoneShortName"::VARCHAR(20) AS exchange_timezone_code,
+        currency::VARCHAR(20) AS exchange_currency_code
+    FROM stg.fundamentals
 )
 
 SELECT * FROM exchange_dim
