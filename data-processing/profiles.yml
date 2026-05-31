@@ -3,7 +3,7 @@ postgres:
   outputs:
     dev:
       type: postgres
-      host: "{{ env_var('DB_HOST', 'localhost') }}"
+      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
       user: "{{ env_var('POSTGRES_USER') }}"
       password: "{{ env_var('POSTGRES_PASSWORD') }}"
       port: 5432

@@ -2,7 +2,7 @@ name: fin_data_warehouse
 services:
   data-acquisition:
     build: data-acquisition
-    container_name: data_acquisition
+    container_name: acquisition
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
       - CACHE_DIRECTORY=/app/cache
@@ -13,7 +13,7 @@ services:
 
   db:
     image: postgres:16
-    container_name: postgres_db
+    container_name: database
     ports:
       - 5432:5432
     environment:
@@ -30,15 +30,29 @@ services:
       retries: 5
       start_period: 3s
 
-
-  dbt:
-    build: data-processing
-    container_name: data_processing
+  loader:
+    build: data-loader
+    container_name: loader
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-      - DB_HOST=db
+      - POSTGRES_HOST=db
+      - STAGING_DIRECTORY=/app/staging
+    volumes:
+      - ./staging:/app/staging
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dbt:
+    build: data-processing
+    container_name: dbt
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=db
       - SEEDS_DIRECTORY=seeds
     volumes:
       - ./staging:/app/seeds
