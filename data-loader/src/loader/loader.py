@@ -41,6 +41,8 @@ def _load_table(
     logger.info(f'[{table_name}] loading {len(files)} file(s)')
     df = reader.read(files)
 
+    # TODO: change df.to_sql to upsert operation to avoid duplicates in stg schema
+
     with engine.begin() as conn:
         df.to_sql(
             name=table_name,
