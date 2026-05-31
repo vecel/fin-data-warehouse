@@ -4,11 +4,6 @@ import pandas as pd
 
 from config import config
 
-TABLE_GLOBS = {
-    'calendars': 'calendars.parquet',
-    'countries': 'countries.parquet',
-    'fundamentals': '*_fundamentals.parquet',
-}
 
 class ParquetReader:
     def resolve_glob(self, glob):

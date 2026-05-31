@@ -2,7 +2,8 @@ import logging
 
 from datetime import datetime, timezone
 import src.db.db as db
-from src.loader.reader import TABLE_GLOBS, reader
+from src.loader.reader import reader
+from config import config
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 def load_all(engine, force=False):
     logger.info('Loading .parquet files from staging directory')
 
-    for table_name, glob in TABLE_GLOBS.items():
+    for table_name, glob in config.STAGING_GLOBS.items():
         _load_table(engine, table_name, glob, force)
 
     logger.info('Loading completed')
@@ -38,19 +39,12 @@ def _load_table(
         logger.info(f'[{table_name}] no new files to load — skipping')
         return
 
-    logger.info(f'[{table_name}] loading {len(files)} file(s)')
     df = reader.read(files)
 
-    # TODO: change df.to_sql to upsert operation to avoid duplicates in stg schema
-
     with engine.begin() as conn:
-        df.to_sql(
-            name=table_name,
-            con=conn,
-            schema='stg',
-            if_exists='append',
-            index=False,
-        )
+        logger.info(f'[{table_name}] upserting {len(files)} file(s)')
+        db.ensure_table(conn, table_name, df, config.PRIMARY_KEYS[table_name])
+        db.upsert(conn, table_name, df, config.PRIMARY_KEYS[table_name])
         db.set_timestamp(conn, table_name, datetime.now(timezone.utc))
 
-    logger.info(f'[{table_name}] loaded {len(df):,} rows')
+    logger.info(f'[{table_name}] upserted {len(df):,} rows')

@@ -8,4 +8,16 @@ class Config:
 
     STAGING_DIRECTORY = os.getenv('STAGING_DIRECTORY')
 
+    STAGING_GLOBS = {
+        'calendars': 'calendars.parquet',
+        'countries': 'countries.parquet',
+        'fundamentals': '*_fundamentals.parquet',
+    }
+
+    PRIMARY_KEYS = {
+        'calendars': ['date'],
+        'countries': ['code'],
+        'fundamentals': ['symbol'],
+    }
+
 config = Config()
