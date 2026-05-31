@@ -1,6 +1,8 @@
 import pandas as pd
 from fredapi import Fred
 
+# TODO: Move to fetchers, add job, schedule job, load .env from project root
+
 # Indexes to gather
 FRED_SERIES_MAP = {
     'US_GDP': 'GDP',
