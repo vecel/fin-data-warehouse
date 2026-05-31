@@ -27,20 +27,25 @@ cd fin-data-warehouse
 
 Create `.env` file with postgres database credentials.
 ```
-cd deploy/
 touch .env
 ```
 
 Paste environment variables to `.env` file. Use your own values.
 ```
+FRED_API_KEY=<api_key>
+
 POSTGRES_USER=<user>
 POSTGRES_PASSWORD=<password>
 POSTGRES_DB=<database>
 ```
 
-Run startup script.
+Build the project.
 ```
-cd ..
+docker compose build
+```
+
+When the build finishes, run startup script.
+```
 ./startup.sh
 ```
 
@@ -62,15 +67,15 @@ cd ..
 #### Work done
 1. Data acqusition:
    - Container definition - Mateusz
-   - Cache & staging - Mateusz
-   - Ticker loader, calendar loader, quote loader - Mateusz
+   - Scheduler & writer - Mateusz
+   - Fetchers: calendars, countries, tickers, fundamentals - Mateusz
 2. Data processing:
     - Dbt project setup - Mateusz
     - Container definition - Mateusz
     - Date dimension, exchange dimension - Mateusz
     - Wse tickers info staging, calendar staging - Mateusz
 3. Deployment:
-    - Docker compose definition - Mateusz
+    - Docker compose definition & startup script - Mateusz
 4. Other:
     - Project and repository structure - Mateusz
     - README - Mateusz
