@@ -12,10 +12,15 @@ class Config:
     STAGING_DIRECTORY = os.getenv('STAGING_DIRECTORY', str(LOCAL_STAGING_DIRECTORY_PATH))
     CACHE_DIRECTORY = os.getenv('CACHE_DIRECTORY', str(LOCAL_CACHE_DIRECTORY_PATH))
     
-    CALENDARS_STAGING_FILE = f'{STAGING_DIRECTORY}/trading_calendars.parquet'
+    CALENDARS_STAGING_FILE = f'{STAGING_DIRECTORY}/calendars.parquet'
     COUNTRIES_STAGING_FILE = f'{STAGING_DIRECTORY}/countries.parquet'
-    FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/fundamentals.parquet'
 
-    TICKERS_CACHE_FILE = f'{CACHE_DIRECTORY}/tickers.parquet'
+    WSE_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/wse_fundamentals.parquet'
+    NASDAQ_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/nasdaq_fundamentals.parquet'
+    NYSE_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/nyse_fundamentals.parquet'
+
+    WSE_TICKERS_CACHE_FILE = f'{CACHE_DIRECTORY}/wse_tickers.parquet'
+    NASDAQ_TICKERS_CACHE_FILE = f'{CACHE_DIRECTORY}/nasdaq_tickers.parquet'
+    NYSE_TICKERS_CACHE_FILE = f'{CACHE_DIRECTORY}/nyse_tickers.parquet'
 
 config = Config()

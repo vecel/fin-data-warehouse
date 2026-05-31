@@ -1,5 +1,6 @@
 import os
 import logging
+import argparse
 import pandas as pd
 from dotenv import load_dotenv
 
@@ -13,7 +14,21 @@ from src.scheduler.scheduler import build
 # from src.fred_loader import load_fred_data
 # from src.quote_loader import fetch_tickers_info
 
-logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-v',
+    '--verbose',
+    default='INFO',
+    choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+    help='Set logging level (default: INFO)',
+)
+args = parser.parse_args()
+
+logging.basicConfig(
+    level=getattr(logging, args.verbose),
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s', 
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 logger = logging.getLogger(__name__)
 

@@ -6,16 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def fetch_tickers():
-    nasdaq_tickers = _fetch_nasdaq_tickers()
-    nyse_tickers = _fetch_nyse_tickers()
-    wse_tickers = _fetch_wse_tickers()
-
-    df = pd.DataFrame(nasdaq_tickers + nyse_tickers + wse_tickers, columns=['ticker'])
-
-    return df
-
-def _fetch_nasdaq_tickers():
+def fetch_nasdaq_tickers():
     logger.info('Fetching Nasdaq tickers.')
     url = 'ftp://ftp.nasdaqtrader.com/symboldirectory/nasdaqlisted.txt'
     try:
@@ -24,12 +15,12 @@ def _fetch_nasdaq_tickers():
         df = df[:-1]
         df = df[~df['Security Name'].str.contains('Test')]
         tickers = df['Symbol'].astype(str).tolist()
-        return tickers
+        return pd.DataFrame(tickers, columns=['ticker'])
     except Exception as e:
         logger.error(f'Cannot fetch Nasdaq tickers. {e}')
 
 
-def _fetch_nyse_tickers():
+def fetch_nyse_tickers():
     logger.info('Fetching Nyse tickers.')
     url = 'ftp://ftp.nasdaqtrader.com/symboldirectory/otherlisted.txt'
     try:
@@ -38,12 +29,12 @@ def _fetch_nyse_tickers():
         df = df[df['Exchange'] == 'N']
         df = df[~df['ACT Symbol'].str.contains(r'\$|\.')]
         tickers = df['ACT Symbol'].astype(str).tolist()
-        return tickers
+        return pd.DataFrame(tickers, columns=['ticker'])
     except Exception as e:
         logger.error(f'Cannot fetch Nyse tickers. {e}')
 
 
-def _fetch_wse_tickers():
+def fetch_wse_tickers():
     logger.info('Fetching WSE tickers.')
     url = 'https://www.biznesradar.pl/gielda/akcje_gpw'
     headers = {
@@ -68,4 +59,4 @@ def _fetch_wse_tickers():
             if ticker.isalnum():
                 tickers.add(f'{ticker}.WA')
 
-    return list(tickers)
+    return pd.DataFrame(tickers, columns=['ticker'])
