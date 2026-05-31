@@ -1,7 +1,7 @@
 import logging
 
 from datetime import datetime, timezone
-import src.db.timestamps as timestamps
+import src.db.db as db
 from src.loader.reader import TABLE_GLOBS, reader
 
 logger = logging.getLogger(__name__)
@@ -27,12 +27,16 @@ def _load_table(
     if not files:
         logger.warning(f'[{table_name}] no files found — skipping')
         return
-
+    
     with engine.begin() as conn:
-        timestamps.ensure_table(conn)
-        last_loading_timestamp = timestamps.get_timestamp(conn, table_name)
+        db.ensure_timestamps_table(conn)
+        last_loading_timestamp = db.get_timestamp(conn, table_name)
 
     files = [file for file in files if force or not last_loading_timestamp or reader.modification_time(file) > last_loading_timestamp]
+
+    if not files:
+        logger.info(f'[{table_name}] no new files to load — skipping')
+        return
 
     logger.info(f'[{table_name}] loading {len(files)} file(s)')
     df = reader.read(files)
@@ -45,6 +49,6 @@ def _load_table(
             if_exists='append',
             index=False,
         )
-        timestamps.set_timestamp(conn, table_name, datetime.now(timezone.utc))
+        db.set_timestamp(conn, table_name, datetime.now(timezone.utc))
 
     logger.info(f'[{table_name}] loaded {len(df):,} rows')

@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 
 
-def ensure_table(conn):
+def ensure_timestamps_table(conn):
     conn.execute(sa.text("""
         CREATE TABLE IF NOT EXISTS stg._timestamps (
             table_name  TEXT        PRIMARY KEY,

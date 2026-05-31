@@ -29,6 +29,7 @@ if __name__ == '__main__':
 
 
     def _shutdown(sig, frame):
+        logger.info('Shutting down watcher')
         watcher.stop()
         stop_event.set()
 
