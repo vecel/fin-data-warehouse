@@ -44,7 +44,7 @@ def bootstrap_job():
     if not _exists(config.WSE_TICKERS_CACHE_FILE):
         wse_delisted = ['REX.WA', 'KDM.WA', 'IDG.WA', 'REG.WA', 'SVR.WA']
         wse_tickers = fetch_wse_tickers()
-        wse_tickers = [ticker for ticker in wse_tickers if ticker not in wse_delisted]
+        wse_tickers = wse_tickers[~wse_tickers['ticker'].isin(wse_delisted)]
         writer.write(wse_tickers, config.WSE_TICKERS_CACHE_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(wse_tickers)} WSE tickers to {config.WSE_TICKERS_CACHE_FILE}.')
 

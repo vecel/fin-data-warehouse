@@ -1,15 +1,15 @@
 name: fin_data_warehouse
 services:
   data-acquisition:
-    build: ../data-acquisition
+    build: data-acquisition
     container_name: data_acquisition
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
-      - CACHE_DIRECTORY=/home/acqu/app/cache
-      - STAGING_DIRECTORY=/home/acqu/app/staging
+      - CACHE_DIRECTORY=/app/cache
+      - STAGING_DIRECTORY=/app/staging
     volumes:
-      - ../staging:/home/acqu/app/staging
-      - ../cache:/home/acqu/app/cache
+      - ./staging:/app/staging
+      - ./cache:/app/cache
 
   db:
     image: postgres:16
@@ -22,7 +22,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres_db:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER}
       interval: 5s
@@ -32,7 +32,7 @@ services:
 
 
   dbt:
-    build: ../data-processing
+    build: data-processing
     container_name: data_processing
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -41,7 +41,7 @@ services:
       - DB_HOST=db
       - SEEDS_DIRECTORY=seeds
     volumes:
-      - ../data-staging:/app/seeds
+      - ./staging:/app/seeds
     depends_on:
       db:
         condition: service_healthy
