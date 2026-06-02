@@ -15,6 +15,8 @@ class Config:
     CALENDARS_STAGING_FILE = f'{STAGING_DIRECTORY}/calendars.parquet'
     COUNTRIES_STAGING_FILE = f'{STAGING_DIRECTORY}/countries.parquet'
 
+    MACRO_STAGING_FILE = f'{STAGING_DIRECTORY}/macro.parquet'
+
     WSE_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/wse_fundamentals.parquet'
     NASDAQ_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/nasdaq_fundamentals.parquet'
     NYSE_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/nyse_fundamentals.parquet'
