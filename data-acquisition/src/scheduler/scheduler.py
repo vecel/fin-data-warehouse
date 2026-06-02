@@ -4,6 +4,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor
 from src.scheduler.jobs import (
     bootstrap_job, 
     calendars_annual_job, 
+    macro_monthly_job,
     # fundamentals_monthly_job
 )
 
@@ -28,6 +29,17 @@ def build() -> BlockingScheduler:
         hour=0,
         minute=30,
         id='calendars_annual_job',
+        misfire_grace_time=86400,
+        coalesce=True
+    )
+
+    scheduler.add_job(
+        macro_monthly_job,
+        trigger='cron',
+        day=1,
+        hour=2,
+        minute=0,
+        id='macro_monthly_job',
         misfire_grace_time=86400,
         coalesce=True
     )
