@@ -9,6 +9,7 @@ from src.fetchers.tickers import (
     fetch_wse_tickers
 )
 from src.fetchers.fundamentals import fetch_fundamentals
+from src.fetchers.macro import fetch_macro_data
 from src.writer.parquet_writer import writer
 from config import config
 
@@ -63,6 +64,11 @@ def bootstrap_job():
         writer.write(fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.WSE_FUNDAMENTALS_STAGING_FILE}.')
 
+    if not _exists(config.MACRO_STAGING_FILE):
+        macro_data = fetch_macro_data()
+        writer.write(macro_data, config.MACRO_STAGING_FILE)
+        logger.info(f'Bootstrap job completed: Saved {len(macro_data)} macro records to {config.MACRO_STAGING_FILE}.')
+
 
 def calendars_annual_job():
     calendars = fetch_trading_calendars()
@@ -74,3 +80,8 @@ def wse_fundamentals_monthly_job():
     fundamentals = _fetch_fundamentals(config.WSE_TICKERS_CACHE_FILE)
     writer.write(fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
     logger.info(f'Monthly job completed: {len(fundamentals)} wse fundamentals data fetched and saved to {config.WSE_FUNDAMENTALS_STAGING_FILE}.')
+
+def macro_monthly_job():
+    macro = fetch_macro_data()
+    writer.write(macro, config.MACRO_STAGING_FILE)
+    logger.info(f'Monthly job completed: {len(macro_data)} macro data fetched and saved to {config.MACRO_STAGING_FILE}.')
