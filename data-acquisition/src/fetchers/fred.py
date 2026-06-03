@@ -20,10 +20,10 @@ FRED_SERIES_MAP = {
 
 def fetch_macro_data() -> pd.DataFrame:
     logger.info('Fetching macro data from FRED.')
-    api_key = os.getenv("FRED_API_KEY")
+    api_key = os.getenv('FRED_API_KEY')
     if not api_key:
-        logger.error("Missing FRED_API_KEY environment variable!")
-        raise ValueError("Missing FRED_API_KEY")
+        logger.error('Missing FRED_API_KEY environment variable!')
+        raise ValueError('Missing FRED_API_KEY')
 
     fred = Fred(api_key=api_key)
     all_data = []
@@ -39,12 +39,12 @@ def fetch_macro_data() -> pd.DataFrame:
             
             all_data.append(df)
         except Exception as e:
-            logger.error(f"Error loading code {code}: {e}")
-
+            logger.error(f'Error loading code {code}: {e}')
+ 
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
         final_df = final_df.dropna(subset=['indicator_value'])
         return final_df
     
-    logger.warning("No macro data found!")
+    logger.warning('No macro data found')
     return pd.DataFrame()

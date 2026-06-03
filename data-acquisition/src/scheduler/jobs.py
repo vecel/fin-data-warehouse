@@ -9,7 +9,7 @@ from src.fetchers.tickers import (
     fetch_wse_tickers
 )
 from src.fetchers.fundamentals import fetch_fundamentals
-from src.fetchers.macro import fetch_macro_data
+from src.fetchers.fred import fetch_macro_data
 from src.writer.parquet_writer import writer
 from config import config
 
