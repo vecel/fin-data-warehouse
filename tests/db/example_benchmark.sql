@@ -1,0 +1,1 @@
+SELECT * FROM dwh.instrument_dim;
