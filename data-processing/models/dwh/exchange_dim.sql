@@ -10,7 +10,7 @@ WITH exchange_dim AS (
         "exchangeTimezoneName"::VARCHAR(50) AS exchange_timezone_name,
         "exchangeTimezoneShortName"::VARCHAR(20) AS exchange_timezone_code,
         currency::VARCHAR(20) AS exchange_currency_code
-    FROM stg.fundamentals
+    FROM raw.fundamentals
 )
 
 SELECT * FROM exchange_dim

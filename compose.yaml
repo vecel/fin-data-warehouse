@@ -23,9 +23,8 @@ services:
       - TABLEAU_USER_PASSWORD=${TABLEAU_USER_PASSWORD}
     volumes:
       - postgres_db:/var/lib/postgresql/data
-      - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      # Password filename has to be lexically bigger than init.sql, used to secure tableau user password
-      - ./deploy/set_tableau_password.sh:/docker-entrypoint-initdb.d/init.sql:ro 
+      - ./deploy/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./deploy/init-passwords.sh:/docker-entrypoint-initdb.d/02_set_tableau_password.sh:ro 
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER}
       interval: 5s

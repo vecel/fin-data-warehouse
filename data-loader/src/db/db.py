@@ -11,7 +11,7 @@ def ensure_table(conn, table_name, df, primary_keys):
         df.head(0).to_sql(
             name=table_name,
             con=conn,
-            schema='stg',
+            schema='raw',
             if_exists='fail',
             index=False,
         )
@@ -21,19 +21,19 @@ def ensure_table(conn, table_name, df, primary_keys):
         # Table already exists, there is no need to alter it.
         return
     except Exception as e:
-        logger.critical(f'Error creating table stg.{table_name}: {e}')
+        logger.critical(f'Error creating table raw.{table_name}: {e}')
         raise
 
     constraint_name = f'{table_name}_PK'
     cols = ', '.join(primary_keys)
     conn.execute(text(f"""
-        ALTER TABLE stg.{table_name}
+        ALTER TABLE raw.{table_name}
         ADD CONSTRAINT {constraint_name} PRIMARY KEY ({cols})
     """))
 
 def ensure_timestamps_table(conn):
     conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS stg._timestamps (
+        CREATE TABLE IF NOT EXISTS raw._timestamps (
             table_name  TEXT        PRIMARY KEY,
             loaded_at   TIMESTAMPTZ NOT NULL
         )
@@ -42,7 +42,7 @@ def ensure_timestamps_table(conn):
 
 def get_timestamp(conn, table_name):
     row = conn.execute(
-        text('SELECT loaded_at FROM stg._timestamps WHERE table_name = :t'),
+        text('SELECT loaded_at FROM raw._timestamps WHERE table_name = :t'),
         {'t': table_name},
     ).fetchone()
     return row[0] if row else None
@@ -50,7 +50,7 @@ def get_timestamp(conn, table_name):
 
 def set_timestamp(conn, table_name, loaded_at):
     conn.execute(text("""
-        INSERT INTO stg._timestamps (table_name, loaded_at)
+        INSERT INTO raw._timestamps (table_name, loaded_at)
         VALUES (:t, :ts)
         ON CONFLICT (table_name)
         DO UPDATE SET loaded_at = EXCLUDED.loaded_at
@@ -67,14 +67,14 @@ def upsert(conn, table_name, df, primary_keys):
         df.to_sql(
             name=table_name,
             con=conn,
-            schema='stg',
+            schema='raw',
             if_exists='append',
             index=False,
             method=_upsert_method(primary_keys),
             chunksize=100,
         )
     except Exception as e:
-        logger.critical(f'Error upserting data to stg.{table_name}: {e}')
+        logger.critical(f'Error upserting data to raw.{table_name}: {e}')
         raise
 
 def _upsert_method(primary_keys):

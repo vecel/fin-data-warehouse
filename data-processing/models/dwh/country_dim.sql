@@ -6,14 +6,14 @@ WITH codes AS (
     SELECT DISTINCT
         name::VARCHAR(50) AS country_name,
         code::VARCHAR(20) AS country_code
-    FROM stg.countries
+    FROM raw.countries
 ),
 
 names AS (
     SELECT DISTINCT
         {{ dbt_utils.generate_surrogate_key(['country']) }} AS country_id,
         country::VARCHAR(50) AS country_name
-    FROM stg.fundamentals
+    FROM raw.fundamentals
 ),
 
 country_dim AS (

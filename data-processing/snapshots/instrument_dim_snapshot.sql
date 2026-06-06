@@ -24,7 +24,7 @@ WITH renamed AS (
             AT TIME ZONE 'UTC')::DATE,
             'YYYYMMDD')::INT AS last_dividend_date_id,
         "dividendYield"::FLOAT AS last_dividend_yield
-    FROM stg.fundamentals
+    FROM raw.fundamentals
 ),
 
 calculated AS (

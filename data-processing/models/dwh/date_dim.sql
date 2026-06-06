@@ -45,7 +45,7 @@ trading_calendars AS (
         is_us_trading_day AS is_united_states_trading_day_flag,
         is_pl_trading_day AS is_poland_trading_day_flag,
         is_us_early_close AS is_united_states_early_close_day_flag
-    FROM stg.calendars
+    FROM raw.calendars
 ),
 
 date_dim AS (
