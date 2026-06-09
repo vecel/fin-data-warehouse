@@ -16,6 +16,8 @@ class Config:
     COUNTRIES_STAGING_FILE = f'{STAGING_DIRECTORY}/countries.parquet'
 
     MACRO_STAGING_FILE = f'{STAGING_DIRECTORY}/macro.parquet'
+    QUOTES_STAGING_FILE = f'{STAGING_DIRECTORY}/quotes.parquet'
+    NEWS_STAGING_FILE = f'{STAGING_DIRECTORY}/news.parquet'
 
     WSE_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/wse_fundamentals.parquet'
     NASDAQ_FUNDAMENTALS_STAGING_FILE = f'{STAGING_DIRECTORY}/nasdaq_fundamentals.parquet'
