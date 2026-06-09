@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 WORKDIR /app
-RUN pip install --no-cache-dir dbt-postgres==1.10.0
+RUN pip install --no-cache-dir dbt-postgres==1.8.0
 COPY packages.yml dbt_project.yml .
 RUN dbt deps
 COPY . .
