@@ -5,6 +5,8 @@ from src.scheduler.jobs import (
     bootstrap_job, 
     calendars_annual_job, 
     macro_monthly_job,
+    quotes_daily_job,
+    news_daily_job,
     # fundamentals_monthly_job
 )
 
@@ -41,6 +43,27 @@ def build() -> BlockingScheduler:
         minute=0,
         id='macro_monthly_job',
         misfire_grace_time=86400,
+        coalesce=True
+    )
+
+    scheduler.add_job(
+        quotes_daily_job,
+        trigger='cron',
+        day_of_week='mon-fri',
+        hour=23,
+        minute=0,
+        id='quotes_daily_job',
+        misfire_grace_time=86400,
+        coalesce=True
+    )
+
+    scheduler.add_job(
+        news_daily_job,
+        trigger='cron',
+        hour='*/4',
+        minute=0,
+        id='news_daily_job',
+        misfire_grace_time=3600,
         coalesce=True
     )
 
