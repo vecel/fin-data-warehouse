@@ -5,6 +5,7 @@ services:
     container_name: acquisition
     environment:
       - FRED_API_KEY=${FRED_API_KEY}
+      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
       - CACHE_DIRECTORY=/app/cache
       - STAGING_DIRECTORY=/app/staging
     volumes:
