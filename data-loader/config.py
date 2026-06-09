@@ -12,12 +12,16 @@ class Config:
         'calendars': 'calendars.parquet',
         'countries': 'countries.parquet',
         'fundamentals': '*_fundamentals.parquet',
+        'quotes': 'quotes.parquet',
+        'market_news': 'news.parquet',
     }
 
     PRIMARY_KEYS = {
         'calendars': ['date'],
         'countries': ['code'],
         'fundamentals': ['symbol'],
+        'quotes': ['ticker', 'date'],
+        'market_news': ['ticker', 'source_link'],
     }
 
 config = Config()
