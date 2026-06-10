@@ -33,6 +33,7 @@ touch .env
 Paste environment variables to `.env` file. Use your own values.
 ```
 FRED_API_KEY=<api_key>
+ALPHA_VANTAGE_API_KEY = <api_key>
 
 POSTGRES_USER=<user>
 POSTGRES_PASSWORD=<password>
