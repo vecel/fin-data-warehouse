@@ -14,6 +14,7 @@ class Config:
         'fundamentals': '*_fundamentals.parquet',
         'quotes': 'quotes.parquet',
         'market_news': 'news.parquet',
+        'macro': 'macro.parquet',
     }
 
     PRIMARY_KEYS = {
@@ -22,6 +23,7 @@ class Config:
         'fundamentals': ['symbol'],
         'quotes': ['ticker', 'date'],
         'market_news': ['ticker', 'source_link'],
+        'macro': ['indicator_code', 'date', 'country_code'],
     }
 
 config = Config()
