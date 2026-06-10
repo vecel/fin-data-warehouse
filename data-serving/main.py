@@ -79,7 +79,7 @@ def get_quotes(
             SELECT i.instrument_code, d.date::text as quote_date, 
                    q.open_price::numeric as open_price, q.close_price::numeric as close_price, 
                    q.low_price::numeric as low_price, q.high_price::numeric as high_price, 
-                   q.volume_number,
+                   q.volume_number
             FROM dwh.quote_fact q
             JOIN dwh.instrument_dim i ON q.instrument_id = i.instrument_id
             JOIN dwh.date_dim d ON q.date_id = d.date_id
