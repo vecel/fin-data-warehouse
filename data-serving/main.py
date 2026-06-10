@@ -129,7 +129,9 @@ def get_instruments():
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            SELECT instrument_id, instrument_code, instrument_short_name, instrument_long_name, 
+            SELECT instrument_id, instrument_code, 
+                   COALESCE(instrument_short_name, instrument_code) AS instrument_short_name, 
+                   COALESCE(instrument_long_name, instrument_code) AS instrument_long_name, 
                    instrument_market_name, instrument_sector_name, instrument_industry_name,
                    instrument_price_category, yearly_price_change_category, is_active_flag
             FROM dwh.instrument_dim
