@@ -2,6 +2,8 @@ import os
 import logging
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import List, Optional
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -22,6 +24,76 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class InstrumentResponse(BaseModel):
+    instrument_id: str = Field(..., description="Klucz surogatowy instrumentu (MD5 Hash)")
+    instrument_code: str = Field(..., description="Symbol giełdowy (np. AAPL, PKO.WA)")
+    instrument_short_name: str = Field(..., description="Skrócona nazwa spółki")
+    instrument_long_name: str = Field(..., description="Pełna nazwa rejestrowa spółki")
+    instrument_market_name: str = Field(..., description="Giełda papierów wartościowych")
+    instrument_sector_name: str = Field(..., description="Sektor ekonomiczny")
+    instrument_industry_name: str = Field(..., description="Branża przemysłowa")
+    instrument_price_category: str = Field(..., description="Klasyfikacja poziomu cenowego akcji")
+    yearly_price_change_category: str = Field(..., description="Ocena rocznej zmiany rentowności")
+    is_active_flag: str = Field(..., description="Flaga aktywności w hurtowni danych (YES/No)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "instrument_id": "98d73a9860255aedea46f497be336125",
+                "instrument_code": "PKO.WA",
+                "instrument_short_name": "PKOBP",
+                "instrument_long_name": "Powszechna Kasa Oszczednosci Bank Polski SA",
+                "instrument_market_name": "WSE",
+                "instrument_sector_name": "Financial Services",
+                "instrument_industry_name": "Banks - Regional",
+                "instrument_price_category": "Mid Stock",
+                "yearly_price_change_category": "Neutral",
+                "is_active_flag": "YES"
+            }
+        }
+
+class QuoteResponse(BaseModel):
+    instrument_code: str = Field(..., description="Symbol aktywa")
+    quote_date: str = Field(..., description="Data sesji giełdowej (YYYY-MM-DD)")
+    open_price: float = Field(..., description="Cena otwarcia sesji")
+    close_price: float = Field(..., description="Cena zamknięcia sesji")
+    low_price: float = Field(..., description="Najniższa cena w ciągu dnia")
+    high_price: float = Field(..., description="Najwyższa cena w ciągu dnia")
+    volume_number: int = Field(..., description="Wolumen obrotu na sesji")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "instrument_code": "AAPL",
+                "quote_date": "2026-06-10",
+                "open_price": 175.50,
+                "close_price": 177.20,
+                "low_price": 174.90,
+                "high_price": 178.00,
+                "volume_number": 52000000
+            }
+        }
+
+class MacroResponse(BaseModel):
+    country_code: str = Field(..., description="Kod kraju w formacie ISO Alpha-2")
+    country_name: str = Field(..., description="Pełna nazwa państwa")
+    indicator_code: str = Field(..., description="Kod wskaźnika w systemie FRED")
+    indicator_name: str = Field(..., description="Nazwa wewnętrzna wskaźnika makro")
+    declaration_date: str = Field(..., description="Data odczytu danych (YYYY-MM-DD)")
+    indicator_value: float = Field(..., description="Wartość numeryczna wskaźnika")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "country_code": "PL",
+                "country_name": "Poland",
+                "indicator_code": "POLCPIALLMINMEI",
+                "indicator_name": "PL_INFLATION",
+                "declaration_date": "2026-05-01",
+                "indicator_value": 4.20
+            }
+        }
+
 def get_db_connection():
     """Establishes and returns a connection to the PostgreSQL Data Warehouse."""
     try:
@@ -37,7 +109,7 @@ def get_db_connection():
         logger.error(f"Critical: Database connection failed. Details: {e}")
         raise HTTPException(status_code=500, detail="Internal Database connection error")
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def read_root():
     """Root health-check endpoint."""
     return {
@@ -45,9 +117,14 @@ def read_root():
         "message": "Financial Data Warehouse API operational. Documentation available at /docs"
     }
 
-@app.get("/api/instruments")
+@app.get(
+    "/api/instruments", 
+    response_model=List[InstrumentResponse], 
+    tags=["Spółki i Instrumenty"],
+    summary="Pobierz listę zarejestrowanych spółek"
+)
 def get_instruments():
-    """Fetch all financial instruments available inside the warehouse dimension table."""
+    """Zwraca wszystkie instrumenty finansowe dostępne w tabeli wymiarów hurtowni (`dwh.instrument_dim`)."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -66,12 +143,17 @@ def get_instruments():
         cursor.close()
         conn.close()
 
-@app.get("/api/quotes")
+@app.get(
+    "/api/quotes", 
+    response_model=List[QuoteResponse], 
+    tags=["Notowania Giełdowe"],
+    summary="Pobierz historyczne wyceny akcji"
+)
 def get_quotes(
-    ticker: str = Query(None, description="Filter historical stock quotes by asset ticker (e.g., AAPL)"),
-    limit: int = Query(100, ge=1, le=1000, description="Limit result dataset row count")
+    ticker: str = Query(None, description="Filtruj notowania po symbolu aktywa (np. AAPL lub PKO.WA)"),
+    limit: int = Query(100, ge=1, le=1000, description="Maksymalna liczba zwracanych wierszy danych")
 ):
-    """Fetch historical stock quotes enriched with forward-filled macroeconomic indicators."""
+    """Zwraca historyczne fakty giełdowe z tabeli `dwh.quote_fact` powiązane z wymiarami czasu i instrumentów."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -102,12 +184,17 @@ def get_quotes(
         cursor.close()
         conn.close()
 
-@app.get("/api/macro")
+@app.get(
+    "/api/macro", 
+    response_model=List[MacroResponse], 
+    tags=["Wskaźniki Makroekonomiczne"],
+    summary="Pobierz surowe indeksy FRED"
+)
 def get_macro_data(
-    country_code: str = Query(None, description="Filter macro indicators by country code (e.g., US, PL)"),
-    limit: int = Query(200, ge=1, le=2000, description="Limit result dataset row count")
+    country_code: str = Query(None, description="Filtruj wskaźniki po kodzie kraju (np. US, PL)"),
+    limit: int = Query(200, ge=1, le=2000, description="Maksymalna liczba zwracanych wierszy danych")
 ):
-    """Fetch raw standalone macroeconomic indicators processed from FRED datasets."""
+    """Zwraca dane makroekonomiczne (PKB, Inflacja, Bezrobocie) zsynchronizowane z serwerów bazy FRED."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
