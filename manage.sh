@@ -29,13 +29,13 @@ fi
 
 case "$ENV" in
     dev)
-        COMPOSE_CMD="docker compose --env-file deploy/.env.dev -f deploy/compose.yaml -f deploy/compose.dev.yaml"
+        COMPOSE_CMD="docker compose --env-file .env.dev -f deploy/compose.yaml -f deploy/compose.dev.yaml"
         ;;
     prod)
-        COMPOSE_CMD="docker compose --env-file deploy/.env.prod -f deploy/compose.yaml -f deploy/compose.prod.yaml"
+        COMPOSE_CMD="docker compose --env-file .env.prod -f deploy/compose.yaml -f deploy/compose.prod.yaml"
         ;;
     test)
-        COMPOSE_CMD="docker compose --env-file deploy/.env.test -f deploy/compose.yaml -f deploy/compose.test.yaml"
+        COMPOSE_CMD="docker compose --env-file .env.test -f deploy/compose.yaml -f deploy/compose.test.yaml"
         ;;
     *)
         echo "Error: Unknown environment '$ENV'. Choose: dev, test, or prod."
