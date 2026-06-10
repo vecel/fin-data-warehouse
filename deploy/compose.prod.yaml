@@ -1,0 +1,11 @@
+name: fin_data_warehouse_prod
+services:
+  db:
+    ports: !reset []
+    restart: always
+
+  data-serving:
+    restart: always
+
+  data-visualization:
+    restart: always

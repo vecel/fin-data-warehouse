@@ -1,0 +1,9 @@
+name: fin_data_warehouse_test
+services:
+  api-load-tester:
+    image: python:3.10-slim
+    volumes:
+      - ../tests/api:/tests
+    command: /bin/bash -c "pip install requests && python /tests/api_load_test.py 10 20 50"
+    depends_on:
+      - data-serving

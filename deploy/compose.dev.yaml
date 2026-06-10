@@ -1,0 +1,8 @@
+name: fin_data_warehouse_dev
+services:
+  data-serving:
+    volumes:
+      - ../data-serving:/app
+  data-visualization:
+    volumes:
+      - ../data-visualization:/app
