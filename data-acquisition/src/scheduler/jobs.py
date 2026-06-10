@@ -72,12 +72,12 @@ def bootstrap_job():
         logger.info(f'Bootstrap job completed: Saved {len(macro_data)} macro records to {config.MACRO_STAGING_FILE}.')
 
     if not _exists(config.QUOTES_STAGING_FILE):
-        quotes_daily_job()
-        logger.info('Bootstrap job completed: Initial quotes fetched.')
+        quotes_data = quotes_daily_job()
+        logger.info(f'Bootstrap job completed: Saved {len(quotes_data)} quotes records to {config.QUOTES_STAGING_FILE}.')
 
     if not _exists(config.NEWS_STAGING_FILE):
-        news_daily_job()
-        logger.info('Bootstrap job completed: Initial news fetched.')
+        news_data = news_daily_job()
+        logger.info(f'Bootstrap job completed: Saved {len(news_data)} news recodrs to {config.NEWS_STAGING_FILE}.')
 
 
 def calendars_annual_job():
