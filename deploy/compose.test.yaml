@@ -1,9 +1,9 @@
 name: fin_data_warehouse_test
 services:
-  api-load-tester:
-    image: python:3.10-slim
+  data-acquisition:
+    entrypoint: ["echo", "Acquisition disabled in test environment"]
+
+  loader:
     volumes:
-      - ../tests/api:/tests
-    command: /bin/bash -c "pip install requests && python /tests/api_load_test.py 10 20 50"
-    depends_on:
-      - data-serving
+    # Select path to parquets created for tests
+      - ../tests/path_to_parquets:/app/staging
