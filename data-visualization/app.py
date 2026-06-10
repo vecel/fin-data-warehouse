@@ -78,15 +78,18 @@ else:
     chosen_record = instruments_df[instruments_df['display_label'] == selected_label].iloc[0]
     ticker_code = chosen_record['instrument_code']
 
-    kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
-    with kpi_col1:
-        st.metric(label="Selected Symbol", value=ticker_code)
+    is_poland = ticker_code.endswith(".WA")
+    currency_code = "PLN" if is_poland else "USD"
+
+    kpi_col2, kpi_col3, kpi_col4, kpi_col5 = st.columns(4)
     with kpi_col2:
         st.metric(label="Market Exchange", value=chosen_record['instrument_market_name'])
     with kpi_col3:
         st.metric(label="Price Level Category", value=chosen_record['instrument_price_category'])
     with kpi_col4:
         st.metric(label="Yearly Performance Shift", value=chosen_record['yearly_price_change_category'])
+    with kpi_col5:
+        st.metric(label="Currency", value=currency_code)
 
     st.markdown("### Interactive Analytical Views")
     tab_market, tab_macro, tab_profile = st.tabs(["📈 Market Candlestick Trends", "🌍 Country Macroeconomic Indicators", "🏢 Corporate Profile"])
@@ -98,25 +101,40 @@ else:
         if quotes_df.empty:
             st.warning(f"No pricing factual data registered inside the warehouse for symbol {ticker_code}")
         else:
-            candlestick_fig = go.Figure(data=[go.Candlestick(
+            price_fig = go.Figure()
+            
+            price_fig.add_trace(go.Scatter(
                 x=quotes_df['quote_date'],
-                open=quotes_df['open_price'],
-                high=quotes_df['high_price'],
-                low=quotes_df['low_price'],
-                close=quotes_df['close_price'],
-                name=ticker_code
-            )])
-            candlestick_fig.update_layout(
+                y=quotes_df['open_price'],
+                mode='lines+markers',
+                name='Opening price',
+                line=dict(color='#1f77b4', width=2),
+                marker=dict(size=6)
+            ))
+            
+            price_fig.add_trace(go.Scatter(
+                x=quotes_df['quote_date'],
+                y=quotes_df['close_price'],
+                mode='lines+markers',
+                name='Closing price',
+                line=dict(color='#ff7f0e', width=2),
+                marker=dict(size=6)
+            ))
+            
+            price_fig.update_layout(
                 template="plotly_dark",
-                xaxis_rangeslider_visible=True,
+                xaxis_title="Date",
+                yaxis_title="Stock price",
                 margin=dict(l=20, r=20, t=20, b=20),
-                height=500
+                height=500,
+                hovermode="x unified"
             )
-            st.plotly_chart(candlestick_fig, use_container_width=True)
+            
+            st.plotly_chart(price_fig, use_container_width=True)
             
             with st.expander("View Raw Warehouse Facts Table (dwh.quote_fact)"):
                 st.dataframe(quotes_df.sort_values('quote_date', ascending=False), use_container_width=True)
-
+    
     with tab_macro:
         st.subheader("Macroeconomic Trends Context")
         
@@ -148,6 +166,7 @@ else:
                 height=450
             )
             st.plotly_chart(macro_fig, use_container_width=True)
+
     with tab_profile:
         st.subheader("Dimension Attributes Summary")
         profile_matrix = {
