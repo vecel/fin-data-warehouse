@@ -1,6 +1,7 @@
 FROM python:3.10-slim
 WORKDIR /app
-RUN pip install --no-cache-dir dbt-postgres==1.10.0
+RUN apt-get update && apt-get -y install libpq-dev gcc
+RUN pip install --no-cache-dir dbt-postgres==1.8.0 dbt-core==1.8.0
 COPY packages.yml dbt_project.yml .
 RUN dbt deps
 COPY . .

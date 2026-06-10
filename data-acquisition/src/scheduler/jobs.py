@@ -10,6 +10,8 @@ from src.fetchers.tickers import (
 )
 from src.fetchers.fundamentals import fetch_fundamentals
 from src.fetchers.fred import fetch_macro_data
+from src.fetchers.quotes import fetch_quotes
+from src.fetchers.news import fetch_market_news
 from src.writer.parquet_writer import writer
 from config import config
 
@@ -69,6 +71,14 @@ def bootstrap_job():
         writer.write(macro_data, config.MACRO_STAGING_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(macro_data)} macro records to {config.MACRO_STAGING_FILE}.')
 
+    if not _exists(config.QUOTES_STAGING_FILE):
+        quotes_data = quotes_daily_job()
+        logger.info(f'Bootstrap job completed: Saved {len(quotes_data)} quotes records to {config.QUOTES_STAGING_FILE}.')
+
+    if not _exists(config.NEWS_STAGING_FILE):
+        news_data = news_daily_job()
+        logger.info(f'Bootstrap job completed: Saved {len(news_data)} news recodrs to {config.NEWS_STAGING_FILE}.')
+
 
 def calendars_annual_job():
     calendars = fetch_trading_calendars()
@@ -85,3 +95,17 @@ def macro_monthly_job():
     macro = fetch_macro_data()
     writer.write(macro, config.MACRO_STAGING_FILE)
     logger.info(f'Monthly job completed: {len(macro_data)} macro data fetched and saved to {config.MACRO_STAGING_FILE}.')
+
+def quotes_daily_job():
+    wse_df = writer.read(config.WSE_TICKERS_CACHE_FILE)
+    nasdaq_df = writer.read(config.NASDAQ_TICKERS_CACHE_FILE)
+    tickers = wse_df['ticker'].tolist() + nasdaq_df['ticker'].tolist()
+    # 500 tickers for testing
+    quotes = fetch_quotes(tickers[:500], period='5d') 
+    writer.write(quotes, config.QUOTES_STAGING_FILE)
+    logger.info(f'Daily job completed: {len(quotes)} quote data fetched and saved to {config.QUOTES_STAGING_FILE}.')
+
+def news_daily_job():
+    news = fetch_market_news(limit=200)
+    writer.write(news, config.NEWS_STAGING_FILE)
+    logger.info(f'Daily job completed: {len(news)} news data fetched and saved to {config.NEWS_STAGING_FILE}.')
