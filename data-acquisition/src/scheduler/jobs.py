@@ -71,6 +71,14 @@ def bootstrap_job():
         writer.write(macro_data, config.MACRO_STAGING_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(macro_data)} macro records to {config.MACRO_STAGING_FILE}.')
 
+    if not _exists(config.QUOTES_STAGING_FILE):
+        quotes_daily_job()
+        logger.info('Bootstrap job completed: Initial quotes fetched.')
+
+    if not _exists(config.NEWS_STAGING_FILE):
+        news_daily_job()
+        logger.info('Bootstrap job completed: Initial news fetched.')
+
 
 def calendars_annual_job():
     calendars = fetch_trading_calendars()
