@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import plotly.graph_objects as go
 
-API_URL = os.getenv("API_URL", "http://data-serving:8000")
+API_URL = os.getenv("API_URL", "http://data-serving:8040")
 
 st.set_page_config(
     page_title="Financial Data Warehouse Portal",
@@ -51,6 +51,20 @@ def fetch_correlated_news(ticker):
         st.error(f"API Error: Failed to download news logs for {ticker}: {e}")
     return pd.DataFrame()
 
+def fetch_macro_data(country_code):
+    """Retrieve raw macroeconomic indicators processed from FRED datasets."""
+    try:
+        response = requests.get(f"{API_URL}/api/macro?country_code={country_code}&limit=1000", timeout=5)
+        if response.status_code == 200:
+            res_data = response.json()
+            if res_data:
+                df = pd.DataFrame(res_data)
+                df['declaration_date'] = pd.to_datetime(df['declaration_date'])
+                return df.sort_values('declaration_date')
+    except Exception as e:
+        st.error(f"API Error: Failed to download macro metrics for {country_code}: {e}")
+    return pd.DataFrame()
+
 instruments_df = fetch_available_instruments()
 
 if instruments_df.empty:
@@ -75,7 +89,7 @@ else:
         st.metric(label="Yearly Performance Shift", value=chosen_record['yearly_price_change_category'])
 
     st.markdown("### Interactive Analytical Views")
-    tab_market, tab_sentiment, tab_profile = st.tabs(["📈 Market Candlestick Trends", "📰 News Feed & Sentiment Analysis", "💼 Corporate Profile"])
+    tab_market, tab_macro, tab_profile = st.tabs(["📈 Market Candlestick Trends", "🌍 Country Macroeconomic Indicators", "🏢 Corporate Profile"])
 
     with tab_market:
         st.subheader("Historical Stock Price Actions")
@@ -103,25 +117,37 @@ else:
             with st.expander("View Raw Warehouse Facts Table (dwh.quote_fact)"):
                 st.dataframe(quotes_df.sort_values('quote_date', ascending=False), use_container_width=True)
 
-    with tab_sentiment:
-        st.subheader("Market Sentiment Tracker")
-        news_df = fetch_correlated_news(ticker_code)
+    with tab_macro:
+        st.subheader("Macroeconomic Trends Context")
         
-        if news_df.empty:
-            st.info(f"No indexed news headlines found in the database for asset {ticker_code}")
+        country_iso = "PL" if ticker_code.endswith(".WA") else "US"
+        
+        macro_df = fetch_macro_data(country_iso)
+        
+        if macro_df.empty:
+            st.info(f"No macroeconomic trends synchronized inside the warehouse for country context: {country_iso}")
         else:
-            for _, article in news_df.iterrows():
-                score = article['instrument_sentiment_value']
-                badge_color = "green" if score > 0.15 else "red" if score < -0.15 else "orange"
-                
-                st.markdown(f"#### 🔗 [{article['news_title_name']}]({article['source_link']})")
-                st.markdown(f"**Publisher:** {article['source_name']} | **Date Tracked:** {article['published_date']}")
-                st.markdown(
-                    f"Asset Sentiment Index: :{badge_color}[{article['instrument_sentiment_name']} ({score})] | "
-                    f"Global Macro Score: {article['aggregated_news_sentiment_name']} ({article['aggregated_news_sentiment_value']})"
-                )
-                st.divider()
-
+            available_indicators = macro_df['indicator_name'].unique().tolist()
+            selected_indicator = st.selectbox("Choose Macro Indicator to Plot:", available_indicators)
+            
+            filtered_macro = macro_df[macro_df['indicator_name'] == selected_indicator]
+            
+            macro_fig = go.Figure()
+            macro_fig.add_trace(go.Scatter(
+                x=filtered_macro['declaration_date'],
+                y=filtered_macro['indicator_value'],
+                mode='lines+markers',
+                name=selected_indicator,
+                line=dict(color='#00CC96', width=2)
+            ))
+            macro_fig.update_layout(
+                template="plotly_dark",
+                xaxis_title="Timeline",
+                yaxis_title="Value Index",
+                margin=dict(l=20, r=20, t=20, b=20),
+                height=450
+            )
+            st.plotly_chart(macro_fig, use_container_width=True)
     with tab_profile:
         st.subheader("Dimension Attributes Summary")
         profile_matrix = {
