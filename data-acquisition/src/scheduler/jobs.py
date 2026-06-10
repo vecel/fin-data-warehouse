@@ -78,7 +78,7 @@ def bootstrap_job():
     if not _exists(config.NEWS_STAGING_FILE):
         try:
             news_data = fetch_market_news(limit=200)
-            writer.write(news, config.NEWS_STAGING_FILE)
+            writer.write(news_data, config.NEWS_STAGING_FILE)
             logger.info(f'Bootstrap job completed: Saved {len(news_data)} news recodrs to {config.NEWS_STAGING_FILE}.')
         except Exception as e:
             logger.error(f'Bootstrap job error: Cannot save market news. Exception: {e}')
@@ -97,7 +97,7 @@ def wse_fundamentals_monthly_job():
 def macro_monthly_job():
     macro = fetch_macro_data()
     writer.write(macro, config.MACRO_STAGING_FILE)
-    logger.info(f'Monthly job completed: {len(macro_data)} macro data fetched and saved to {config.MACRO_STAGING_FILE}.')
+    logger.info(f'Monthly job completed: {len(macro)} macro data fetched and saved to {config.MACRO_STAGING_FILE}.')
 
 def quotes_daily_job():
     wse_df = writer.read(config.WSE_TICKERS_CACHE_FILE)
@@ -107,6 +107,7 @@ def quotes_daily_job():
     quotes = fetch_quotes(tickers[:500], period='5d') 
     writer.write(quotes, config.QUOTES_STAGING_FILE)
     logger.info(f'Daily job completed: {len(quotes)} quote data fetched and saved to {config.QUOTES_STAGING_FILE}.')
+    return quotes
 
 def news_daily_job():
     news = fetch_market_news(limit=200)
