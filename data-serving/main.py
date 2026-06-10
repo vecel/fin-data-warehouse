@@ -94,7 +94,8 @@ def get_quotes(
         params.append(limit)
         
         cursor.execute(query, tuple(params))
-        return cursor.fetchall()
+        result = cursor.fetchall()
+        return result if result is not None else []
     except Exception as e:
         logger.error(f"Error querying dwh.quote_fact: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve stock quotes data")
