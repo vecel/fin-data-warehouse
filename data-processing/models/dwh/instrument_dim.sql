@@ -18,7 +18,7 @@ WITH renamed AS (
         "currentPrice"::FLOAT AS current_price,
         "fiftyTwoWeekChangePercent"::FLOAT AS fifty_two_week_change_percent,
         TO_CHAR(
-            (TO_TIMESTAMP("lastDividendDate"::FLOAT)
+            (TO_TIMESTAMP(NULLIF("lastDividendDate", 'nan')::FLOAT)
             AT TIME ZONE 'UTC')::DATE,
             'YYYYMMDD')::INT AS last_dividend_date_id,
         "dividendYield"::FLOAT AS last_dividend_yield
