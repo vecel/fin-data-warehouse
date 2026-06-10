@@ -76,9 +76,12 @@ def bootstrap_job():
         logger.info(f'Bootstrap job completed: Saved {len(quotes_data)} quotes records to {config.QUOTES_STAGING_FILE}.')
 
     if not _exists(config.NEWS_STAGING_FILE):
-        news_data = news_daily_job()
-        logger.info(f'Bootstrap job completed: Saved {len(news_data)} news recodrs to {config.NEWS_STAGING_FILE}.')
-
+        try:
+            news_data = fetch_market_news(limit=200)
+            writer.write(news, config.NEWS_STAGING_FILE)
+            logger.info(f'Bootstrap job completed: Saved {len(news_data)} news recodrs to {config.NEWS_STAGING_FILE}.')
+        except Exception as e:
+            logger.error(f'Bootstrap job error: Cannot save market news. Exception: {e}')
 
 def calendars_annual_job():
     calendars = fetch_trading_calendars()
