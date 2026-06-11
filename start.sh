@@ -1,5 +1,12 @@
 #!/bin/bash
 
+echo "Initializing cache and staging directories..."
+mkdir cache
+mkdir staging
+
+chown -R 1000:1000 cache
+chown -R 1000:1000 staging
+
 ENV=$1
 ACTION=$2
 
