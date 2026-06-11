@@ -15,10 +15,12 @@ show_help() {
     echo "  prod  - Production environment (secured, detached mode)"
     echo ""
     echo "Actions:"
-    echo "  up    - Start containers (with automatic build)"
-    echo "  down  - Stop containers and remove database volumes"
-    echo "  build - Force rebuild of docker images"
-    echo "  logs  - View live logs"
+    echo "  up       - Start containers (with automatic build)"
+    echo "  db-only  - Start database container only"
+    echo "  dbt-only - Start dbt container only"
+    echo "  down     - Stop containers and remove database volumes"
+    echo "  build    - Force rebuild of docker images"
+    echo "  logs     - View live logs"
     echo "======================================================================="
 }
 
@@ -52,6 +54,24 @@ case "$ACTION" in
             echo "Type './manage.sh prod logs' to view the logs."
         else
             $COMPOSE_CMD up --build
+        fi
+        ;;
+    db-only)
+        echo "Starting database for [$ENV] environment..."
+        if [ "$ENV" == "prod" ]; then
+            $COMPOSE_CMD up -d --build db
+            echo "Production database has been started in the background."
+        else
+            $COMPOSE_CMD up --build db
+        fi
+        ;;
+    dbt-only)
+        echo "Starting dbt for [$ENV] environment..."
+        if [ "$ENV" == "prod" ]; then
+            $COMPOSE_CMD up -d --build dbt
+            echo "Production dbt has been started in the background."
+        else
+            $COMPOSE_CMD up --build dbt
         fi
         ;;
     down)
