@@ -10,7 +10,7 @@ This system follows a modular, multi-layer architecture:
 * **Data Staging:** Local CSV files functioning as a lightweight staging layer.
 * **Database:** PostgreSQL serving as the central Data Warehouse.
 * **Data Transformation:** dbt (Data Build Tool) for building analytics-ready models from raw data.
-* **Data Serving (API):** A containerized Python REST API (FastAPI/Flask) via Docker.
+* **Data Serving (API):** A containerized Python REST API (FastAPI) via Docker, including interactive Swagger UI documentation available at /docs.
 [* **Data Visualization:** Tableau dashboards connecting directly to the transformed PostgreSQL schemas.]
 
 ## Prerequisites
@@ -25,12 +25,12 @@ git clone https://github.com/vecel/fin-data-warehouse.git
 cd fin-data-warehouse
 ```
 
-Create `.env` file with postgres database credentials.
+Create enviroment files with your credentials (`.env.dev`, `.env.test`, `.env.prod` depending on the environment you want to run).
 ```
-touch .env
+touch .env.dev
 ```
 
-Paste environment variables to `.env` file. Use your own values.
+Paste environment variables to your `.env` file. Use your own values.
 ```
 FRED_API_KEY=<api_key>
 ALPHA_VANTAGE_API_KEY = <api_key>
@@ -38,17 +38,21 @@ ALPHA_VANTAGE_API_KEY = <api_key>
 POSTGRES_USER=<user>
 POSTGRES_PASSWORD=<password>
 POSTGRES_DB=<database>
+TABLEAU_USER_PASSWORD=<tableau_password>
 ```
 
-Build the project.
-```
-docker compose build
-```
-
-When the build finishes, run startup script.
+Initialize the directory structure.
 ```
 ./startup.sh
 ```
+
+Start the system using the environment manager script.
+```
+./manage.sh dev up
+```
+
+
+
 
 [comment]: # (Add guide to create .env inside data-acquisition)
 [comment]: # (After running docker compose up root owns data-staging directory. You won't have access to it unless you change directory ownership)
@@ -56,10 +60,12 @@ When the build finishes, run startup script.
 ## Repository structure
 
 * `/data-acquisition` - Python scripts and requirements for fetching data.
-* `/data-staging` - Directory for temporary CSV staging (files ignored by git).
+* `/data-loader` - Python scripts for automatic data loading to the database.
+* `/staging` & `/cache` - Directories for temporary Parquet files for staging and caching (files ignored by git).
 * `/data-processing` - dbt models, tests, and configurations.
-* `/api` - Python REST API source code.
-* `/deploy` - Infrastructure files including `docker-compose.yml` and database init scripts.
+* `/data-serving` - Python REST API source code (Fast API).
+* `/data-visualization` - Streamlit application for data presentation and dashboards.
+* `/deploy` - Infrastructure files including `docker-compose.yaml` and database init scripts.
 
 [comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
 
@@ -70,13 +76,18 @@ When the build finishes, run startup script.
    - Container definition - Mateusz
    - Scheduler & writer - Mateusz
    - Fetchers: calendars, countries, tickers, fundamentals - Mateusz
+   - Fetchers: news, quotes, fred - Olek
 2. Data processing:
     - Dbt project setup - Mateusz
     - Container definition - Mateusz
     - Date dimension, exchange dimension - Mateusz
     - Wse tickers info staging, calendar staging - Mateusz
+    - Fact tables - Olek
+    - Macro indicator dimension - Olek
 3. Deployment:
     - Docker compose definition & startup script - Mateusz
+    - Separation for dev, test, prod enviroments & manage script - Olek
 4. Other:
     - Project and repository structure - Mateusz
     - README - Mateusz
+    - Data serving and visualization - Olek
