@@ -6,4 +6,4 @@ services:
   loader:
     volumes:
     # Select path to parquets created for tests
-      - ../tests/path_to_parquets:/app/staging
+      - ../staging:/app/staging

@@ -2,7 +2,10 @@
 
 set -e
 
-source ../../.env
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+COMPOSE_DIR="${SCRIPT_DIR}/../../deploy/"
+
+source "${SCRIPT_DIR}/../../.env.test"
 
 DB_SERVICE="db"
 DB_USER="benchmark"           
@@ -11,8 +14,9 @@ CLIENTS=20
 THREADS=4
 TEST_DURATION=60
 
-CONTAINER_ID=$(docker compose ps -q "${DB_SERVICE}" | head -n 1)
+CONTAINER_ID=$(docker compose -f "${COMPOSE_DIR}"/compose.yaml -f "${COMPOSE_DIR}"/compose.test.yaml ps -q "${DB_SERVICE}" | head -n 1)
 SQL_FILE="quote_benchmark.sql"
+SQL_FILE_PATH="${SCRIPT_DIR}/${SQL_FILE}"
 
 if [ -z "$CONTAINER_ID" ]; then
     echo "Error: The Docker Compose service '$DB_SERVICE' is not running."
@@ -21,7 +25,7 @@ if [ -z "$CONTAINER_ID" ]; then
 fi
 
 echo "Preparing SQL file for pgbench"
-docker cp "${SQL_FILE}" "${CONTAINER_ID}:/tmp/${SQL_FILE}"
+docker cp "${SQL_FILE_PATH}" "${CONTAINER_ID}:/tmp/${SQL_FILE}"
 
 echo "Starting database load test with pgbench"
 docker exec "${CONTAINER_ID}" \
