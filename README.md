@@ -7,11 +7,11 @@ An end-to-end data architecture designed to acquire, process, store, and serve d
 This system follows a modular, multi-layer architecture:
 
 * **Data Acquisition:** Python scripts extracting raw data from external sources.
-* **Data Staging:** Local CSV files functioning as a lightweight staging layer.
-* **Database:** PostgreSQL serving as the central Data Warehouse.
+* **Data Staging:** Local parquet files functioning as a lightweight staging layer.
+* **Database:** Contenerized PostgreSQL serving as the central Data Warehouse.
 * **Data Transformation:** dbt (Data Build Tool) for building analytics-ready models from raw data.
 * **Data Serving (API):** A containerized Python REST API (FastAPI) via Docker, including interactive Swagger UI documentation available at /docs.
-[* **Data Visualization:** Tableau dashboards connecting directly to the transformed PostgreSQL schemas.]
+* **Data Visualization:** Tableau dashboards connecting directly to the transformed PostgreSQL schemas and Streamlit website.
 
 ## Prerequisites
 This project assumes you have installed `docker` with `docker-compose` and have privileges to run `docker` commands.
