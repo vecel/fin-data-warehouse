@@ -92,13 +92,19 @@ Or if you want to run stress.
     - Dbt project setup - Mateusz
     - Container definition - Mateusz
     - Date dimension, exchange dimension - Mateusz
-    - Wse tickers info staging, calendar staging - Mateusz
+    - Tickers info staging, calendar staging - Mateusz
     - Fact tables - Olek
     - Macro indicator dimension - Olek
-3. Deployment:
+3. Data serving:
+    - Container definition - Olek
+    - API endpoints - Olek
+4. Data visualization:
+    - Container definition - Olek
+    - Streamlit app - Olek
+4. Deployment:
     - Docker compose definition & startup script - Mateusz
     - Separation for dev, test, prod enviroments & manage script - Olek
-4. Other:
+5. Other:
     - Project and repository structure - Mateusz
-    - README - Mateusz
-    - Data serving and visualization - Olek
+    - README - Mateusz & Olek
+    - Load & stress tests - Mateusz
