@@ -71,7 +71,7 @@ Or if you want to run stress.
 * `/data-processing` - dbt models, tests, and configurations.
 * `/data-serving` - Python REST API source code (Fast API).
 * `/data-visualization` - Streamlit application for data presentation and dashboards.
-* `/deploy` - Infrastructure files including `docker-compose.yaml` and database init scripts.
+* `/deploy` - Infrastructure files including `compose.yaml` and database init scripts.
 
 [comment]: # (Add installation guide and automation with all required packages like docker, python etc.)
 
