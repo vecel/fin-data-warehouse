@@ -12,7 +12,7 @@ THREADS=4
 TEST_DURATION=60
 
 CONTAINER_ID=$(docker compose ps -q "${DB_SERVICE}" | head -n 1)
-SQL_FILE="example_benchmark.sql"
+SQL_FILE="quote_benchmark.sql"
 
 if [ -z "$CONTAINER_ID" ]; then
     echo "Error: The Docker Compose service '$DB_SERVICE' is not running."

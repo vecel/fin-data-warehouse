@@ -83,12 +83,14 @@ def _upsert_method(primary_keys):
         if not data:
             return
 
-        insert_stmt = insert(table.table).values(data)
+        valid_columns = set(c.name for c in table.table.columns)
+
+        insert_stmt = insert(table.table)
 
         update_dict = {
             c.name: c
             for c in insert_stmt.excluded
-            if c.name not in primary_keys
+            if c.name not in primary_keys and c.name in valid_columns
         }
 
         if update_dict:
@@ -101,6 +103,6 @@ def _upsert_method(primary_keys):
                 index_elements=primary_keys,
             )
 
-        conn.execute(upsert_stmt.execution_options(render_postcompile=True))
+        conn.execute(upsert_stmt, data)
 
     return method

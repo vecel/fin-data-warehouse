@@ -66,6 +66,17 @@ def bootstrap_job():
         writer.write(fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.WSE_FUNDAMENTALS_STAGING_FILE}.')
 
+    # if not _exists(config.NASDAQ_FUNDAMENTALS_STAGING_FILE):
+    #     fundamentals = _fetch_fundamentals(config.NASDAQ_TICKERS_CACHE_FILE)
+    #     writer.write(fundamentals, config.NASDAQ_FUNDAMENTALS_STAGING_FILE)
+    #     logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.NASDAQ_FUNDAMENTALS_STAGING_FILE}.')
+
+    # CBX not found
+    if not _exists(config.NYSE_FUNDAMENTALS_STAGING_FILE):
+        fundamentals = _fetch_fundamentals(config.NYSE_TICKERS_CACHE_FILE)
+        writer.write(fundamentals, config.NYSE_FUNDAMENTALS_STAGING_FILE)
+        logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.NYSE_FUNDAMENTALS_STAGING_FILE}.')
+
     if not _exists(config.MACRO_STAGING_FILE):
         macro_data = fetch_macro_data()
         writer.write(macro_data, config.MACRO_STAGING_FILE)
