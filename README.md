@@ -41,21 +41,16 @@ POSTGRES_DB=<database>
 TABLEAU_USER_PASSWORD=<tableau_password>
 ```
 
-Initialize the directory structure.
-```
-./startup.sh
-```
-
 Start the system using the environment manager script.
 ```
-./manage.sh dev up
+./start.sh dev up
 ```
 
 
 ## Tests
 Start `test` environment.
 ```
-./manage.sh test up
+./start.sh test up
 ```
 
 To run load test against database open terminal window and run test script.
