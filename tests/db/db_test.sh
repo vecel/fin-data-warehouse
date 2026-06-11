@@ -2,6 +2,33 @@
 
 set -e
 
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 {load|stress}"
+    exit 1
+fi
+
+MODE=$1
+
+case "$MODE" in
+    load)
+        echo "Initializing LOAD test"
+        CLIENTS=20
+        THREADS=4
+        TEST_DURATION=60
+        ;;
+    stress)
+        echo "Initializing STRESS test"
+        CLIENTS=60
+        THREADS=4
+        TEST_DURATION=60
+        ;;
+    *)
+        echo "Error: Invalid mode '$MODE'."
+        echo "Usage: $0 {load|stress}"
+        exit 1
+        ;;
+esac
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 COMPOSE_DIR="${SCRIPT_DIR}/../../deploy/"
 
@@ -9,10 +36,6 @@ source "${SCRIPT_DIR}/../../.env.test"
 
 DB_SERVICE="db"
 DB_USER="benchmark"           
-
-CLIENTS=20
-THREADS=4
-TEST_DURATION=60
 
 CONTAINER_ID=$(docker compose -f "${COMPOSE_DIR}"/compose.yaml -f "${COMPOSE_DIR}"/compose.test.yaml ps -q "${DB_SERVICE}" | head -n 1)
 SQL_FILE="quote_benchmark.sql"
