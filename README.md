@@ -33,7 +33,7 @@ touch .env.dev
 Paste environment variables to your `.env` file. Use your own values.
 ```
 FRED_API_KEY=<api_key>
-ALPHA_VANTAGE_API_KEY = <api_key>
+ALPHA_VANTAGE_API_KEY=<api_key>
 
 POSTGRES_USER=<user>
 POSTGRES_PASSWORD=<password>
@@ -52,10 +52,21 @@ Start the system using the environment manager script.
 ```
 
 
+## Tests
+Start `test` environment.
+```
+./manage.sh test up
+```
 
+To run load test against database open terminal window and run test script.
+```
+./tests/db/db_test.sh load
+```
 
-[comment]: # (Add guide to create .env inside data-acquisition)
-[comment]: # (After running docker compose up root owns data-staging directory. You won't have access to it unless you change directory ownership)
+Or if you want to run stress.
+```
+./tests/db/db_test.sh stress
+```
 
 ## Repository structure
 
