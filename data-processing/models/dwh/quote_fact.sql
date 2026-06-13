@@ -14,17 +14,30 @@ WITH quotes AS (
     FROM raw.quotes
 ),
 
+instrument_info AS (
+    SELECT DISTINCT
+        symbol AS instrument_code,
+        exchange,
+        country
+    FROM raw.fundamentals
+),
+
 quote_fact AS (
     SELECT
         i.instrument_id,
         {{ to_date_id('q.quote_date') }} AS date_id,
-q.open_price::NUMERIC::MONEY AS open_price,
+        e.exchange_id,
+        c.country_id,
+        q.open_price::NUMERIC::MONEY AS open_price,
         q.close_price::NUMERIC::MONEY AS close_price,
         q.low_price::NUMERIC::MONEY AS low_price,
         q.high_price::NUMERIC::MONEY AS high_price,
         q.volume_number::BIGINT AS volume_number
     FROM quotes q
     LEFT JOIN {{ ref('instrument_dim') }} i ON q.instrument_code = i.instrument_code
+    LEFT JOIN instrument_info ii ON q.instrument_code = ii.instrument_code
+    LEFT JOIN {{ ref('exchange_dim') }} e ON ii.exchange = e.exchange_code
+    LEFT JOIN {{ ref('country_dim') }} c ON ii.country = c.country_name
     WHERE i.instrument_id IS NOT NULL
 )
 
