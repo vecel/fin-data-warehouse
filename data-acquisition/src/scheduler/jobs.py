@@ -66,10 +66,10 @@ def bootstrap_job():
         writer.write(fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.WSE_FUNDAMENTALS_STAGING_FILE}.')
 
-    # if not _exists(config.NASDAQ_FUNDAMENTALS_STAGING_FILE):
-    #     fundamentals = _fetch_fundamentals(config.NASDAQ_TICKERS_CACHE_FILE)
-    #     writer.write(fundamentals, config.NASDAQ_FUNDAMENTALS_STAGING_FILE)
-    #     logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.NASDAQ_FUNDAMENTALS_STAGING_FILE}.')
+    if not _exists(config.NASDAQ_FUNDAMENTALS_STAGING_FILE):
+        fundamentals = _fetch_fundamentals(config.NASDAQ_TICKERS_CACHE_FILE)
+        writer.write(fundamentals, config.NASDAQ_FUNDAMENTALS_STAGING_FILE)
+        logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.NASDAQ_FUNDAMENTALS_STAGING_FILE}.')
 
     # CBX not found
     if not _exists(config.NYSE_FUNDAMENTALS_STAGING_FILE):
@@ -111,11 +111,20 @@ def macro_monthly_job():
     logger.info(f'Monthly job completed: {len(macro)} macro data fetched and saved to {config.MACRO_STAGING_FILE}.')
 
 def quotes_daily_job():
-    wse_df = writer.read(config.WSE_TICKERS_CACHE_FILE)
-    nasdaq_df = writer.read(config.NASDAQ_TICKERS_CACHE_FILE)
-    tickers = wse_df['ticker'].tolist() + nasdaq_df['ticker'].tolist()
+    tickers = [
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'NFLX', 'TSLA', 'INTC', 'CSCO',
+        'JPM', 'BAC', 'V', 'MA', 'AXP', 'GS', 'MS',
+        'JNJ', 'PFE', 'UNH', 'PG', 'KO', 'PEP', 'WMT', 'MCD', 'DIS', 'BA', 'CAT', 'XOM', 'CVX',
+        'PKO.WA', 'PEO.WA', 'PZU.WA', 'PKN.WA', 'DNP.WA', 'ALE.WA', 'CDR.WA', 
+        'KGH.WA', 'LPP.WA', 'SPL.WA', 'KRU.WA', 'MBK.WA', 'ALR.WA', 'BHW.WA', 
+        'CPS.WA', 'KTY.WA', 'MIL.WA', 'TPE.WA', 'ACP.WA', 'EAT.WA']
+    
+    quotes = fetch_quotes(tickers, period='5y')
+    #wse_df = writer.read(config.WSE_TICKERS_CACHE_FILE)
+    #nasdaq_df = writer.read(config.NASDAQ_TICKERS_CACHE_FILE)
+    #tickers = wse_df['ticker'].tolist() + nasdaq_df['ticker'].tolist()
     # 500 tickers for testing
-    quotes = fetch_quotes(tickers[:500], period='5d') 
+    #quotes = fetch_quotes(tickers[:500], period='5d') 
     writer.write(quotes, config.QUOTES_STAGING_FILE)
     logger.info(f'Daily job completed: {len(quotes)} quote data fetched and saved to {config.QUOTES_STAGING_FILE}.')
     return quotes
