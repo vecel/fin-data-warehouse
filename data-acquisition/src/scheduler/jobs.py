@@ -51,29 +51,27 @@ def bootstrap_job():
         writer.write(wse_tickers, config.WSE_TICKERS_CACHE_FILE)
         logger.info(f'Bootstrap job completed: Saved {len(wse_tickers)} WSE tickers to {config.WSE_TICKERS_CACHE_FILE}.')
 
-    if not _exists(config.NASDAQ_TICKERS_CACHE_FILE):
-        nasdaq_tickers = fetch_nasdaq_tickers()
-        writer.write(nasdaq_tickers, config.NASDAQ_TICKERS_CACHE_FILE)
-        logger.info(f'Bootstrap job completed: Saved {len(nasdaq_tickers)} Nasdaq tickers to {config.NASDAQ_TICKERS_CACHE_FILE}.')
+#    if not _exists(config.NASDAQ_TICKERS_CACHE_FILE):
+#        nasdaq_tickers = fetch_nasdaq_tickers()
+#        writer.write(nasdaq_tickers, config.NASDAQ_TICKERS_CACHE_FILE)
+#        logger.info(f'Bootstrap job completed: Saved {len(nasdaq_tickers)} Nasdaq tickers to {config.NASDAQ_TICKERS_CACHE_FILE}.')
 
-    if not _exists(config.NYSE_TICKERS_CACHE_FILE):
-        nyse_tickers = fetch_nyse_tickers()
-        writer.write(nyse_tickers, config.NYSE_TICKERS_CACHE_FILE)
-        logger.info(f'Bootstrap job completed: Saved {len(nyse_tickers)} Nyse tickers to {config.NYSE_TICKERS_CACHE_FILE}.')
-
+#    if not _exists(config.NYSE_TICKERS_CACHE_FILE):
+#        nyse_tickers = fetch_nyse_tickers()
+#        writer.write(nyse_tickers, config.NYSE_TICKERS_CACHE_FILE)
+#        logger.info(f'Bootstrap job completed: Saved {len(nyse_tickers)} Nyse tickers to {config.NYSE_TICKERS_CACHE_FILE}.')
+#
     if not _exists(config.WSE_FUNDAMENTALS_STAGING_FILE):
-        fundamentals = _fetch_fundamentals(config.WSE_TICKERS_CACHE_FILE)
-        writer.write(fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
-        logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.WSE_FUNDAMENTALS_STAGING_FILE}.')
-
-    if not _exists(config.NASDAQ_FUNDAMENTALS_STAGING_FILE):
+        wse_tickers_df = writer.read(config.WSE_TICKERS_CACHE_FILE)
+        wse_tickers = wse_tickers_df['ticker'].tolist()
         usa_tickers = [
             'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'NFLX', 'TSLA', 'INTC', 'CSCO',
             'JPM', 'BAC', 'V', 'MA', 'AXP', 'GS', 'MS', 'JNJ', 'PFE', 'UNH', 'PG', 'KO', 
             'PEP', 'WMT', 'MCD', 'DIS', 'BA', 'CAT', 'XOM', 'CVX']
-        usa_fundamentals = fetch_fundamentals(usa_tickers)
-        writer.write(usa_fundamentals, config.NASDAQ_FUNDAMENTALS_STAGING_FILE)
-        logger.info(f'Bootstrap job completed: Saved {len(fundamentals)} fundamentals to {config.NASDAQ_FUNDAMENTALS_STAGING_FILE}.')
+        all_tickers = wse_tickers + usa_tickers
+        all_fundamentals = fetch_fundamentals(all_tickers)
+        writer.write(all_fundamentals, config.WSE_FUNDAMENTALS_STAGING_FILE)
+        logger.info(f'Bootstrap job completed: Saved {len(all_fundamentals)} combined fundamentals.')
 
     # CBX not found
     # if not _exists(config.NYSE_FUNDAMENTALS_STAGING_FILE):
