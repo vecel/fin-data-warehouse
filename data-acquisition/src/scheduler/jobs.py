@@ -130,6 +130,7 @@ def quotes_daily_job():
     return quotes
 
 def news_daily_job():
-    news = fetch_market_news(limit=200)
+    usa_tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META']
+    news = fetch_market_news(tickers=usa_tickers, limit=200)
     writer.write(news, config.NEWS_STAGING_FILE)
     logger.info(f'Daily job completed: {len(news)} news data fetched and saved to {config.NEWS_STAGING_FILE}.')
