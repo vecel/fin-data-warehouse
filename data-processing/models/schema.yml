@@ -59,11 +59,53 @@ models:
   - name: macro_indicator_dim
     data_tests:
       - any_column_is_null
+    columns:
+      - name: indicator_code
+        data_tests:
+          - unique
     
   - name: macro_fact
     data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - country_id
+            - date_id
+            - indicator_id
       - any_column_is_null
+    columns:
+      - name: date_id
+        data_tests:
+          - relationships:
+              to: ref('date_dim')
+              field: date_id
+      - name: country_id
+        data_tests:
+          - relationships:
+              to: ref('country_dim')
+              field: country_id
+      - name: indicator_id
+        data_tests:
+          - relationships:
+              to: ref('macro_indicator_dim')
+              field: indicator_id
   
   - name: market_news_fact
     data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - instrument_id
+            - date_id
+            - source_link
       - any_column_is_null
+    columns:
+      - name: date_id
+        data_tests:
+          - relationships:
+              to: ref('date_dim')
+              field: date_id
+      - name: instrument_id
+        data_tests:
+          - relationships:
+              to: ref('instrument_dim')
+              field: instrument_id
+

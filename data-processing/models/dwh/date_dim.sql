@@ -4,7 +4,7 @@
 
 WITH date_spine AS (
     SELECT generate_series(
-        '2020-01-01'::DATE, 
+        '1945-01-01'::DATE, 
         '2030-12-31'::DATE, 
         '1 day'::INTERVAL
     )::DATE AS calendar_date
