@@ -11,7 +11,11 @@ WITH renamed AS (
         city::VARCHAR(50) AS city_name,
         state::VARCHAR(50) AS state_name,
         zip::VARCHAR(20) AS zip_code,
-        market::VARCHAR(50) AS instrument_market_name,
+        CASE 
+            WHEN market = 'pl_market' THEN 'Poland'
+            WHEN market = 'us_market' THEN 'USA'
+            ELSE market
+        END::VARCHAR(50) AS instrument_market_name,
         "quoteType"::VARCHAR(50) AS instrument_quote_type_name,
         sector::VARCHAR(50) AS instrument_sector_name,
         industry::VARCHAR(50) AS instrument_industry_name,
