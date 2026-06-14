@@ -2,18 +2,59 @@ models:
   - name: instrument_dim
     data_tests: 
       - any_column_is_null
+    columns:
+      - name: instrument_code
+        data_tests:
+          - unique
 
   - name: country_dim  
     data_tests: 
       - any_column_is_null
+    columns:
+      - name: country_code
+        data_tests:
+          - unique
 
   - name: exchange_dim
     data_tests:
       - any_column_is_null 
+    columns:
+      - name: exchange_code
+        data_tests:
+          - unique
 
   - name: quote_fact
     data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - instrument_id
+            - date_id
       - any_column_is_null
+
+    columns:
+      - name: instrument_id
+        data_tests:
+          - relationships:
+              to: ref('instrument_dim')
+              field: instrument_id
+
+      - name: date_id
+        data_tests:
+          - relationships:
+              to: ref('date_dim')
+              field: date_id
+
+      - name: exchange_id
+        data_tests:
+          - relationships:
+              to: ref('exchange_dim')
+              field: exchange_id
+
+      - name: country_id
+        data_tests:
+          - relationships:
+              to: ref('country_dim')
+              field: country_id
 
   - name: macro_indicator_dim
     data_tests:
