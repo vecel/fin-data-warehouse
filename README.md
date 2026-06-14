@@ -90,6 +90,7 @@ Or if you want to run stress.
     - Tickers info staging, calendar staging - Mateusz
     - Fact tables - Olek
     - Macro indicator dimension - Olek
+    - Dwh tests - Mateusz
 3. Data serving:
     - Container definition - Olek
     - API endpoints - Olek
