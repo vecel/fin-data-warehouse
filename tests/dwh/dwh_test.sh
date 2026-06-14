@@ -1,15 +1,16 @@
 #!/bin/bash
 set -e
 
-if [ "$#" -lt 2 ]; then
-    echo "Usage: ./dwh_test.sh <path_to_sql_script> <model_name>"
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: ./dwh_test.sh <path_to_sql_script> <model_name> [--preview]"
     exit 1
 fi
 
-
 SQL_INIT_FILE=$1
-SQL_INIT_FILE_BASENAME=$(basename "${SQL_INIT_FILE}")
 MODEL_NAME=$2
+PREVIEW=$3
+echo $PREVIEW
+SQL_INIT_FILE_BASENAME=$(basename "${SQL_INIT_FILE}")
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIR="${SCRIPT_DIR}/../../"
@@ -43,12 +44,14 @@ fi
 ${COMPOSE} cp "${SQL_INIT_FILE}" "${DB_SERVICE}:/tmp/${SQL_INIT_FILE_BASENAME}"
 ${PSQL} -f "/tmp/${SQL_INIT_FILE_BASENAME}"
 
-echo "Ready for testing, current state:"
+echo "Ready for testing"
 
-${PSQL} -c "\
-    select * \
-    from dwh.${MODEL_NAME} \
-    limit 10" 
+if [ "$PREVIEW" == "--preview" ]; then
+    ${PSQL} -c "\
+        select * \
+        from dwh.${MODEL_NAME} \
+        limit 10" 
+fi
 
 echo "Running dbt model"
 
@@ -57,7 +60,9 @@ ${COMPOSE} \
     dbt \
     run --select $MODEL_NAME
 
-${PSQL} -c "\
-    select * \
-    from dwh.${MODEL_NAME} \
-    limit 10"
+if [ "$PREVIEW" == "--preview" ]; then
+    ${PSQL} -c "\
+        select * \
+        from dwh.${MODEL_NAME} \
+        limit 10"
+fi
