@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table'
+    unique_key='macro_fact_id'
 ) }}
 
 WITH macro_raw AS (
@@ -14,7 +14,6 @@ WITH macro_raw AS (
 macro_fact AS (
     SELECT
         {{ dbt_utils.generate_surrogate_key(['m.indicator_code', 'm.macro_date', 'm.country_code']) }} AS macro_fact_id,
-        
         {{ to_date_id('m.macro_date') }} AS date_id,
         c.country_id,
         i.indicator_id,

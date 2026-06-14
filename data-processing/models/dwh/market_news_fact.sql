@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table'
+    unique_key='market_news_id'
 ) }}
 
 WITH news AS (

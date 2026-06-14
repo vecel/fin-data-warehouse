@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table'
+    unique_key=['instrument_id', 'date_id']
 ) }}
 
 WITH quotes AS (
