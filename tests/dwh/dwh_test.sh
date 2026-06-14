@@ -22,7 +22,6 @@ DB_SERVICE="db"
 COMPOSE="docker compose -f ${COMPOSE_DIR}/compose.yaml -f ${COMPOSE_DIR}/compose.test.yaml"
 PSQL="${COMPOSE} exec -e PGPASSWORD=${POSTGRES_PASSWORD} ${DB_SERVICE} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
 
-
 echo "Checking for database container..."
 
 CONTAINER_ID=$(${COMPOSE} ps -q "${DB_SERVICE}" | head -n 1)
