@@ -1,5 +1,6 @@
 {{ config(
-    unique_key='country_id'
+    unique_key='country_id',
+    materialized='incremental'
 ) }}
 
 WITH codes AS (
@@ -36,3 +37,6 @@ country_dim AS (
 )
 
 SELECT * FROM country_dim
+{% if is_incremental() %}
+  WHERE country_id NOT IN (SELECT country_id FROM {{ this }})
+{% endif %}

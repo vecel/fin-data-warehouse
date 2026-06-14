@@ -1,5 +1,8 @@
 {{ config(
-    unique_key='exchange_id'
+    unique_key='exchange_id',
+    materialized='incremental',
+    incremental_strategy='merge',
+    on_schema_change='sync_all_columns'
 ) }}
 
 WITH renamed AS (
@@ -19,7 +22,9 @@ exchange_dim AS (
     WHERE exchange_name IS NOT NULL
         AND exchange_code IS NOT NULL
         AND exchange_timezone_name IS NOT NULL
+        AND exchange_timezone_code IS NOT NULL
         AND exchange_currency_code IS NOT NULL
 )
 
-SELECT * FROM exchange_dim
+SELECT * 
+FROM exchange_dim

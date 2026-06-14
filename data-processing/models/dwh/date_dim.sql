@@ -1,5 +1,6 @@
 {{ config(
-    unique_key='date_id'
+    unique_key='date_id',
+    materialized='incremental'
 ) }}
 
 WITH date_spine AS (
@@ -60,3 +61,6 @@ date_dim AS (
 )
 
 SELECT * FROM date_dim
+{% if is_incremental() %}
+  WHERE date_id NOT IN (SELECT date_id FROM {{ this }})
+{% endif %}

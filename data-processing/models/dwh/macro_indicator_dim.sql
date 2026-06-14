@@ -1,5 +1,8 @@
 {{ config(
-    unique_key='indicator_id'
+    unique_key='indicator_id',
+    materialized='incremental',
+    incremental_strategy='merge',
+    on_schema_change='sync_all_columns'
 ) }}
 
 WITH indicators AS (
