@@ -28,16 +28,10 @@ while True:
     time.sleep(5)
 "
 
-# echo "Running dbt snapshots"
-# dbt snapshot
+echo "Running dbt snapshots"
+dbt snapshot
 
-# echo "Running dbt tests"
-# dbt test --store-failures
-
-# echo "Running dbt models"
-# dbt run
-
-echo "Running dbt build"
-dbt build --store-failures
+echo "Running dbt models"
+dbt run
 
 echo "Transformations completed successfully "
