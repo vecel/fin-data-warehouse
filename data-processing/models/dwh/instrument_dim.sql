@@ -1,5 +1,6 @@
 {{ config(
-    unique_key='instrument_id'
+    unique_key='instrument_id',
+
 ) }}
 
 WITH renamed AS (
@@ -50,7 +51,7 @@ instrument_dim AS (
         COALESCE({{ to_date_id('snap.dbt_valid_to') }}, 99991231) AS valid_to_date_id,
         CASE 
             WHEN snap.dbt_valid_to IS NULL THEN 'YES'
-            ELSE 'No'
+            ELSE 'NO'
         END AS is_active_flag
     FROM {{ ref('instrument_dim_snapshot') }} snap
     LEFT JOIN renamed curr

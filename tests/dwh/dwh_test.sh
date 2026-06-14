@@ -49,11 +49,10 @@ echo "Ready for testing"
 if [ "$PREVIEW" == "--preview" ]; then
     ${PSQL} -c "\
         select * \
-        from dwh.${MODEL_NAME} \
-        limit 10" 
+        from dwh.${MODEL_NAME}"
 fi
 
-echo "Running dbt model"
+echo "Running dbt snapshot and model"
 
 ${COMPOSE} \
     run --rm --entrypoint dbt \
@@ -63,6 +62,5 @@ ${COMPOSE} \
 if [ "$PREVIEW" == "--preview" ]; then
     ${PSQL} -c "\
         select * \
-        from dwh.${MODEL_NAME} \
-        limit 10"
+        from dwh.${MODEL_NAME}"
 fi
