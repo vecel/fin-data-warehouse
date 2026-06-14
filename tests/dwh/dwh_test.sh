@@ -9,7 +9,7 @@ fi
 SQL_INIT_FILE=$1
 MODEL_NAME=$2
 PREVIEW=$3
-echo $PREVIEW
+
 SQL_INIT_FILE_BASENAME=$(basename "${SQL_INIT_FILE}")
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
