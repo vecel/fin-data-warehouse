@@ -12,4 +12,7 @@ def fetch_countries():
     ]
     countries_df = pd.DataFrame(country_data)
     countries_df.loc[countries_df['code'] == 'CZ', 'name'] = 'Czech Republic'
+    countries_df.loc[countries_df['code'] == 'KR', 'name'] = 'South Korea'
+    countries_df.loc[countries_df['code'] == 'TR', 'name'] = 'Turkey'
+    countries_df.loc[countries_df['code'] == 'TW', 'name'] = 'Taiwan'
     return countries_df

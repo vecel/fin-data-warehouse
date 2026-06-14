@@ -1,0 +1,28 @@
+models:
+  - name: instrument_dim
+    data_tests: 
+      - any_column_is_null
+
+  - name: country_dim  
+    data_tests: 
+      - any_column_is_null
+
+  - name: exchange_dim
+    data_tests:
+      - any_column_is_null 
+
+  - name: quote_fact
+    data_tests:
+      - any_column_is_null
+
+  - name: macro_indicator_dim
+    data_tests:
+      - any_column_is_null
+    
+  - name: macro_fact
+    data_tests:
+      - any_column_is_null
+  
+  - name: market_news_fact
+    data_tests:
+      - any_column_is_null

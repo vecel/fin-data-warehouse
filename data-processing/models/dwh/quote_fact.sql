@@ -14,12 +14,20 @@ WITH quotes AS (
     FROM raw.quotes
 ),
 
-instrument_info AS (
+source AS (
     SELECT DISTINCT
         symbol AS instrument_code,
         exchange,
-        country
+        {{ null_if_on_string('country', 'country') }}
     FROM raw.fundamentals
+),
+
+instrument_info AS (
+    SELECT DISTINCT
+        instrument_code,
+        exchange,
+        COALESCE(country, 'Unavailable') AS country
+    FROM source
 ),
 
 quote_fact AS (
