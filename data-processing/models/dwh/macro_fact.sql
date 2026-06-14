@@ -1,5 +1,6 @@
 {{ config(
-    unique_key='macro_fact_id'
+    unique_key='macro_fact_id',
+    materialized='incremental'
 ) }}
 
 WITH macro_raw AS (
@@ -25,3 +26,6 @@ macro_fact AS (
 )
 
 SELECT * FROM macro_fact
+{% if is_incremental() %}
+  WHERE macro_fact_id NOT IN (SELECT macro_fact_id FROM {{ this }})
+{% endif %}

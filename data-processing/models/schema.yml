@@ -95,7 +95,7 @@ models:
           combination_of_columns:
             - instrument_id
             - date_id
-            - source_link
+            - news_title_name
       - any_column_is_null
     columns:
       - name: date_id

@@ -1,5 +1,6 @@
 {{ config(
-    unique_key='market_news_id'
+    unique_key='market_news_id',
+    materialized='incremental'
 ) }}
 
 WITH news AS (
@@ -25,7 +26,7 @@ WITH news AS (
 
 market_news_fact AS (
     SELECT
-        {{ dbt_utils.generate_surrogate_key(['n.source_link', 'n.instrument_code']) }} AS market_news_id,
+        {{ dbt_utils.generate_surrogate_key(['n.news_title_name', 'n.published_date_str', 'n.instrument_code']) }} AS market_news_id,
         i.instrument_id,
         n.published_date_str::BIGINT AS date_id,
         n.news_title_name::VARCHAR(250),
@@ -46,6 +47,18 @@ market_news_fact AS (
     FROM news n
     LEFT JOIN {{ ref('instrument_dim') }} i ON n.instrument_code = i.instrument_code
     WHERE i.instrument_id IS NOT NULL
+),
+
+deduplicated AS (
+    {{ dbt_utils.deduplicate(
+        relation='market_news_fact',
+        partition_by='instrument_id, date_id, news_title_name',
+        order_by='date_id desc',
+       )
+    }}
 )
 
-SELECT * FROM market_news_fact
+SELECT * FROM deduplicated
+{% if is_incremental() %}
+  WHERE market_news_id NOT IN (SELECT market_news_id FROM {{ this }})
+{% endif %}

@@ -1,5 +1,8 @@
 {{ config(
-    unique_key=['instrument_id', 'date_id']
+    unique_key=['instrument_id', 'date_id'],
+    materialized='incremental',
+    incremental_strategy='merge',
+    on_schema_change='sync_all_columns'
 ) }}
 
 WITH quotes AS (
